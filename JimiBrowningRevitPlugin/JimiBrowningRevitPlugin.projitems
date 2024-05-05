@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>7f878731-0825-42be-9fc0-170ae8752be3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>JimiBrowningRevitPlugin</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeCount.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SharedParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Elements.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphicOverrides.cs" />
+    <Compile Include="..\JimiBrowningRevitPlugin\ExternalApplication.cs" />
+    <Compile Include="..\JimiBrowningRevitPlugin\ElementIdValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FabDuctSelectionFilter.cs" />
+    <Compile Include="..\JimiBrowningRevitPlugin\FabDuctSharedParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RenumberFabDuctCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RenumberFabDuctEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SyncParametersCommand.cs" />
+  </ItemGroup>
+</Project>

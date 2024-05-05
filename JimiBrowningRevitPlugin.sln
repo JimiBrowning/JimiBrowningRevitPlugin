@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JimiBrowningRevitPlugin2024", "JimiBrowningRevitPlugin2024\JimiBrowningRevitPlugin2024.csproj", "{EDC25F00-705F-4777-B4FE-B12B7556DCAA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A7FA8828-D59B-46F3-B3C5-ED5584478B7C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JimiBrowningRevitPluginCore", "JimiBrowningRevitPluginCore\JimiBrowningRevitPluginCore.csproj", "{C6A307DA-F585-490C-B8C7-FADD3A74F331}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "JimiBrowningRevitPlugin", "JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.shproj", "{7F878731-0825-42BE-9FC0-170AE8752BE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JimiBrowningRevitPlugin2023", "JimiBrowningRevitPlugin2023\JimiBrowningRevitPlugin2023.csproj", "{437526A5-8B1A-4989-B97D-EC9E5BA86BDB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JimiBrowningRevitPlugin2022", "JimiBrowningRevitPlugin2022\JimiBrowningRevitPlugin2022.csproj", "{F9AA335E-494C-4CC4-B05F-EDE1524A2398}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDC25F00-705F-4777-B4FE-B12B7556DCAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDC25F00-705F-4777-B4FE-B12B7556DCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDC25F00-705F-4777-B4FE-B12B7556DCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDC25F00-705F-4777-B4FE-B12B7556DCAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6A307DA-F585-490C-B8C7-FADD3A74F331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6A307DA-F585-490C-B8C7-FADD3A74F331}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6A307DA-F585-490C-B8C7-FADD3A74F331}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6A307DA-F585-490C-B8C7-FADD3A74F331}.Release|Any CPU.Build.0 = Release|Any CPU
+		{437526A5-8B1A-4989-B97D-EC9E5BA86BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{437526A5-8B1A-4989-B97D-EC9E5BA86BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{437526A5-8B1A-4989-B97D-EC9E5BA86BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{437526A5-8B1A-4989-B97D-EC9E5BA86BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9AA335E-494C-4CC4-B05F-EDE1524A2398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9AA335E-494C-4CC4-B05F-EDE1524A2398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9AA335E-494C-4CC4-B05F-EDE1524A2398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9AA335E-494C-4CC4-B05F-EDE1524A2398}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7B65AC97-9263-4DF2-A592-5A1F11DC1D45}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems*{437526a5-8b1a-4989-b97d-ec9e5ba86bdb}*SharedItemsImports = 5
+		JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems*{7f878731-0825-42be-9fc0-170ae8752be3}*SharedItemsImports = 13
+		JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems*{edc25f00-705f-4777-b4fe-b12b7556dcaa}*SharedItemsImports = 5
+		JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems*{f9aa335e-494c-4cc4-b05f-ede1524a2398}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

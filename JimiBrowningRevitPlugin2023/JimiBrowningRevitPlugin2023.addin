@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>Jimi Browning Revit Plugin 2023</Name>
+		<Assembly>JimiBrowningRevitPlugin2023.dll</Assembly>
+		<AddInId>6A2EED8E-3736-4F3E-BE86-42228F163D39</AddInId>
+		<FullClassName>JimiBrowningRevitPlugin.ExternalApplication</FullClassName>
+		<VendorId>Jimi Browning</VendorId>
+		<VendorDescription>JimiBrowning@outlook.com.au</VendorDescription>
+	</AddIn>
+</RevitAddIns>
