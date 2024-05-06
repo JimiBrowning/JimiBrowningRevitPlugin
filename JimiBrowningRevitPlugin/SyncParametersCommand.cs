@@ -204,8 +204,6 @@ internal class SyncParametersCommand : IExternalCommand
 
     private ChangeCount SyncElementLevels()
     {
-        // TODO: Sync duct BL
-        // TODO: Delete change count
         var changeCount = new ChangeCount(0, 0);
 
         IEnumerable<Level> levels = Elements.GetAllLevels(document);
@@ -242,20 +240,23 @@ internal class SyncParametersCommand : IExternalCommand
                     }
                 }
 
-                if (rlHeightParameter != null
-                    && !EqualsWithError(
-                        rlHeightParameter.AsDouble(),
-                        level.Elevation))
+                if (rlHeightParameter != null)
                 {
-                    if (sharedParameters
-                        .Set(rlHeightParameter, level.Elevation))
+                    if (!rlHeightParameter.HasValue
+                        || !EqualsWithError(
+                            rlHeightParameter.AsDouble(),
+                            level.Elevation))
                     {
-                        changeCount.parameterChangeCount++;
-
-                        if (!hasChanges)
+                        if (sharedParameters
+                            .Set(rlHeightParameter, level.Elevation))
                         {
-                            changeCount.elementChangeCount++;
-                            hasChanges = true;
+                            changeCount.parameterChangeCount++;
+
+                            if (!hasChanges)
+                            {
+                                changeCount.elementChangeCount++;
+                                hasChanges = true;
+                            }
                         }
                     }
                 }
