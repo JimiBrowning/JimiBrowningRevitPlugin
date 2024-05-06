@@ -9,6 +9,12 @@ internal class FabDuctSharedParameters
     private const string FAB_PARAM_PRIMARY_DEPTH = "Main Primary Depth";
     private const string FAB_PARAM_PRIMARY_DIAMETER = "Main Primary Diameter";
 
+#if REVIT2023_OR_GREATER
+    private const string FAB_PARAM_BOTTOM = "Lower End Bottom Elevation";
+#else
+    private const string FAB_PARAM_BOTTOM = "Bottom";
+#endif
+
     private const string DIMENSION_WIDTH = "Width";
     private const string DIMENSION_DEPTH = "Depth";
     private const string DIMENSION_WIDTH_IN = "Width In";
@@ -53,6 +59,7 @@ internal class FabDuctSharedParameters
     private const string SHARED_PARAM_RADIUS_3 = "FAB RADIUS 3";
     private const string SHARED_PARAM_SQ_BEND_BE = "Sq Bend BE";
     private const string SHARED_PARAM_SQ_BEND_TE = "Sq Bend TE";
+    private const string SHARED_PARAM_BOTTOM_LEVEL = "Bottom Level";
 
     private static readonly Dictionary<string, List<string>>
         DIMENSION_TO_SHARED_PARAM_MAP = new()
@@ -137,7 +144,8 @@ internal class FabDuctSharedParameters
         { SHARED_PARAM_RADIUS_2, 0 },
         { SHARED_PARAM_RADIUS_3, 0 },
         { SHARED_PARAM_SQ_BEND_BE, 0 },
-        { SHARED_PARAM_SQ_BEND_TE, 0 }
+        { SHARED_PARAM_SQ_BEND_TE, 0 },
+        { SHARED_PARAM_BOTTOM_LEVEL, 0 }
     };
 
     internal IReadOnlyDictionary<string, double> SharedParameters
@@ -149,6 +157,7 @@ internal class FabDuctSharedParameters
     {
         MapDimensionsToSharedParameters(fabDuct);
         CalculateInternalSize(fabDuct);
+        SyncBottomLevel(fabDuct);
     }
 
     private void MapDimensionsToSharedParameters(FabricationPart fabDuct)
@@ -203,6 +212,17 @@ internal class FabDuctSharedParameters
         Set(SHARED_PARAM_INTERNAL_WIDTH, internalWidth);
         Set(SHARED_PARAM_INTERNAL_HEIGHT, internalHeight);
         Set(SHARED_PARAM_INTERNAL_DIAMETER, internalDiameter);
+    }
+
+    private void SyncBottomLevel(FabricationPart fabDuct)
+    {
+        Parameter bottomLevelParameter =
+            fabDuct.LookupParameter(FAB_PARAM_BOTTOM);
+
+        double bottomLevel =
+            bottomLevelParameter != null ? bottomLevelParameter.AsDouble() : 0;
+
+        Set(SHARED_PARAM_BOTTOM_LEVEL, bottomLevel);
     }
 
     private void Set(string sharedParameter, double value)
