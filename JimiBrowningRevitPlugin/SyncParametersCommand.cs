@@ -33,8 +33,7 @@ internal class SyncParametersCommand : IExternalCommand
         var changeCount = new ChangeCount(0, 0);
         changeCount += SyncFabDuctParameters();
         changeCount += SyncGrilleSpigotSizes();
-
-        // TODO: Sync RL height and name
+        changeCount += SyncElementLevels();
 
         transactionGroup.Assimilate();
 
@@ -65,9 +64,9 @@ internal class SyncParametersCommand : IExternalCommand
         new TaskDialog(NAME)
         {
             MainContent = "Sync complete. " +
-            changeCount.parameterChangeCount.ToString() + " change(s) to shared " +
-            "parameters of " + changeCount.elementChangeCount.ToString() +
-            " element(s).",
+            changeCount.parameterChangeCount.ToString() + " change(s) to " +
+            "shared parameters of " +
+            changeCount.elementChangeCount.ToString() + " element(s).",
             CommonButtons = TaskDialogCommonButtons.Ok
         }.Show();
 
@@ -101,10 +100,9 @@ internal class SyncParametersCommand : IExternalCommand
                     continue;
 
                 if (!parameter.HasValue
-                    || !Equals(
+                    || !EqualsWithError(
                         parameter.AsDouble(),
-                        sharedParameter.Value,
-                        0.000001D))
+                        sharedParameter.Value))
                 {
                     if (sharedParameters.Set(parameter, sharedParameter.Value))
                     {
@@ -204,13 +202,89 @@ internal class SyncParametersCommand : IExternalCommand
         return changeCount;
     }
 
-    private int FeetToMM(double feet)
+    private ChangeCount SyncElementLevels()
     {
-        return (int)(feet * 304.8);
+        // TODO: Sync duct BL
+        // TODO: Delete change count
+        var changeCount = new ChangeCount(0, 0);
+
+        IEnumerable<Level> levels = Elements.GetAllLevels(document);
+
+        using var transaction = new Transaction(document);
+        transaction.Start("Sync element levels");
+
+        foreach (Level level in levels)
+        {
+            IEnumerable<Element> elements =
+                Elements.GetAllElementsOfLevel(document, level.Id);
+
+            foreach (Element element in elements)
+            {
+                bool hasChanges = false;
+
+                Parameter rlNameParameter =
+                    sharedParameters.Get(element, "RL Name");
+                Parameter rlHeightParameter =
+                    sharedParameters.Get(element, "RL Height");
+
+                if (rlNameParameter != null &&
+                    rlNameParameter.AsString() != level.Name)
+                {
+                    if (sharedParameters.Set(rlNameParameter, level.Name))
+                    {
+                        changeCount.parameterChangeCount++;
+
+                        if (!hasChanges)
+                        {
+                            changeCount.elementChangeCount++;
+                            hasChanges = true;
+                        }
+                    }
+                }
+
+                if (rlHeightParameter != null
+                    && !EqualsWithError(
+                        rlHeightParameter.AsDouble(),
+                        level.Elevation))
+                {
+                    if (sharedParameters
+                        .Set(rlHeightParameter, level.Elevation))
+                    {
+                        changeCount.parameterChangeCount++;
+
+                        if (!hasChanges)
+                        {
+                            changeCount.elementChangeCount++;
+                            hasChanges = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (transaction.Commit() != TransactionStatus.Committed)
+        {
+            new TaskDialog(NAME)
+            {
+                MainContent = "Failed to commit transaction. Element levels " +
+                "not synced.",
+                CommonButtons = TaskDialogCommonButtons.Ok
+            }.Show();
+
+            return new ChangeCount(0, 0);
+        }
+
+        return changeCount;
     }
 
-    private bool Equals(double x, double y, double precision)
+    private int FeetToMM(double feet)
     {
-        return Math.Abs(x - y) < precision;
+        double roundFactor = (feet >= 0.0) ? 0.5 : -0.5;
+        return (int)(feet * 304.8 + roundFactor);
+    }
+
+    private bool EqualsWithError(double x, double y)
+    {
+        return Math.Abs(x - y) < 1E-6;
     }
 }

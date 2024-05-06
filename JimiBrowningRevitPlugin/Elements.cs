@@ -9,8 +9,6 @@ namespace JimiBrowningRevitPlugin;
 
 internal class Elements
 {
-    private Elements() { }
-
     internal static FabricationPart SelectFabDuct(
         UIDocument uiDocument,
         bool lockAllWithItemNumber,
@@ -113,6 +111,32 @@ internal class Elements
             .WhereElementIsNotElementType();
 
         return grilles;
+    }
+
+    internal static IEnumerable<Level> GetAllLevels(Document document)
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter = new ElementClassFilter(typeof(Level));
+        IEnumerable<Level> levels =
+            collector
+            .WherePasses(filter)
+            .ToElements()
+            .Cast<Level>();
+
+        return levels;
+    }
+
+    internal static IEnumerable<Element>
+        GetAllElementsOfLevel(Document document, ElementId levelId)
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter = new ElementLevelFilter(levelId);
+        IEnumerable<Element> elements =
+            collector
+            .WherePasses(filter)
+            .WhereElementIsNotElementType();
+
+        return elements;
     }
 
     internal static string GetFabDuctItemNumber(FabricationPart fabDuct)
