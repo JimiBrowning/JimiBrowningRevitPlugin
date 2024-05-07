@@ -6,10 +6,11 @@ namespace JimiBrowningRevitPlugin;
 
 internal class FabDuctSelectionFilter : ISelectionFilter
 {
+    private static readonly ElementId fabDuctCategoryId =
+        new(BuiltInCategory.OST_FabricationDuctwork);
+
     private readonly bool lockAllWithItemNumber;
     private readonly HashSet<ElementIdValue> lockElementIds;
-    private readonly ElementId fabDuctCategoryId =
-        new(BuiltInCategory.OST_FabricationDuctwork);
 
     internal FabDuctSelectionFilter(
         bool lockAllWithItemNumber,
