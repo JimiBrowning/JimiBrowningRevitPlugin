@@ -8,7 +8,6 @@ internal class FabDuctSharedParameters
     private const string FAB_PARAM_PRIMARY_WIDTH = "Main Primary Width";
     private const string FAB_PARAM_PRIMARY_DEPTH = "Main Primary Depth";
     private const string FAB_PARAM_PRIMARY_DIAMETER = "Main Primary Diameter";
-
 #if REVIT2023_OR_GREATER
     private const string FAB_PARAM_BOTTOM = "Lower End Bottom Elevation";
 #else
@@ -62,7 +61,18 @@ internal class FabDuctSharedParameters
     private const string SHARED_PARAM_BOTTOM_LEVEL = "Bottom Level";
 
     private static readonly Dictionary<string, List<string>>
-        DIMENSION_TO_SHARED_PARAM_MAP = new()
+        dimensionToSharedParamMap;
+
+    private readonly Dictionary<string, double> sharedParameters;
+
+    internal IReadOnlyDictionary<string, double> SharedParameters
+    {
+        get { return sharedParameters; }
+    }
+
+    static FabDuctSharedParameters()
+    {
+        dimensionToSharedParamMap = new Dictionary<string, List<string>>()
         {
             { DIMENSION_WIDTH, new List<string>{
                 SHARED_PARAM_WIDTH_1,
@@ -126,31 +136,30 @@ internal class FabDuctSharedParameters
             { DIMENSION_BRANCH_DEPTH_1, new List<string>{
                 SHARED_PARAM_HEIGHT_1 } }
         };
+    }
 
-    private readonly Dictionary<string, double> sharedParameters = new()
+    internal FabDuctSharedParameters()
     {
-        { SHARED_PARAM_WIDTH_1, 0 },
-        { SHARED_PARAM_WIDTH_2, 0 },
-        { SHARED_PARAM_WIDTH_3, 0 },
-        { SHARED_PARAM_HEIGHT_1, 0 },
-        { SHARED_PARAM_HEIGHT_2, 0 },
-        { SHARED_PARAM_HEIGHT_3, 0 },
-        { SHARED_PARAM_DIAMETER_1, 0 },
-        { SHARED_PARAM_INTERNAL_WIDTH, 0 },
-        { SHARED_PARAM_INTERNAL_HEIGHT, 0 },
-        { SHARED_PARAM_INTERNAL_DIAMETER, 0 },
-        { SHARED_PARAM_RADIUS, 0 },
-        { SHARED_PARAM_RADIUS_1, 0 },
-        { SHARED_PARAM_RADIUS_2, 0 },
-        { SHARED_PARAM_RADIUS_3, 0 },
-        { SHARED_PARAM_SQ_BEND_BE, 0 },
-        { SHARED_PARAM_SQ_BEND_TE, 0 },
-        { SHARED_PARAM_BOTTOM_LEVEL, 0 }
-    };
-
-    internal IReadOnlyDictionary<string, double> SharedParameters
-    {
-        get { return sharedParameters; }
+        sharedParameters = new Dictionary<string, double>()
+        {
+            { SHARED_PARAM_WIDTH_1, 0 },
+            { SHARED_PARAM_WIDTH_2, 0 },
+            { SHARED_PARAM_WIDTH_3, 0 },
+            { SHARED_PARAM_HEIGHT_1, 0 },
+            { SHARED_PARAM_HEIGHT_2, 0 },
+            { SHARED_PARAM_HEIGHT_3, 0 },
+            { SHARED_PARAM_DIAMETER_1, 0 },
+            { SHARED_PARAM_INTERNAL_WIDTH, 0 },
+            { SHARED_PARAM_INTERNAL_HEIGHT, 0 },
+            { SHARED_PARAM_INTERNAL_DIAMETER, 0 },
+            { SHARED_PARAM_RADIUS, 0 },
+            { SHARED_PARAM_RADIUS_1, 0 },
+            { SHARED_PARAM_RADIUS_2, 0 },
+            { SHARED_PARAM_RADIUS_3, 0 },
+            { SHARED_PARAM_SQ_BEND_BE, 0 },
+            { SHARED_PARAM_SQ_BEND_TE, 0 },
+            { SHARED_PARAM_BOTTOM_LEVEL, 0 }
+        };
     }
 
     internal void Process(FabricationPart fabDuct)
@@ -166,7 +175,7 @@ internal class FabDuctSharedParameters
             fabDuct.GetDimensions();
         foreach (FabricationDimensionDefinition dimension in dimensions)
         {
-            if (DIMENSION_TO_SHARED_PARAM_MAP.TryGetValue(
+            if (dimensionToSharedParamMap.TryGetValue(
                 dimension.Name,
                 out List<string> sharedParameters))
             {
