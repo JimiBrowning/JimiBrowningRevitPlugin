@@ -2,7 +2,7 @@
 
 namespace JimiBrowningRevitPlugin;
 
-internal class ElementIdValue
+internal readonly struct ElementIdValue
 {
 #if REVIT2024_OR_GREATER
     internal readonly long value;
