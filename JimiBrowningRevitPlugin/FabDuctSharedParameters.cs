@@ -5,9 +5,6 @@ namespace JimiBrowningRevitPlugin;
 
 internal class FabDuctSharedParameters
 {
-    private const string FAB_PARAM_PRIMARY_WIDTH = "Main Primary Width";
-    private const string FAB_PARAM_PRIMARY_DEPTH = "Main Primary Depth";
-    private const string FAB_PARAM_PRIMARY_DIAMETER = "Main Primary Diameter";
 #if REVIT2023_OR_GREATER
     private const string FAB_PARAM_BOTTOM = "Lower End Bottom Elevation";
 #else
@@ -190,36 +187,37 @@ internal class FabDuctSharedParameters
 
     private void CalculateInternalSize(FabricationPart fabDuct)
     {
-        Parameter widthParameter =
-            fabDuct.LookupParameter(FAB_PARAM_PRIMARY_WIDTH);
-        Parameter heightParameter =
-            fabDuct.LookupParameter(FAB_PARAM_PRIMARY_DEPTH);
-        Parameter diameterParameter =
-            fabDuct.LookupParameter(FAB_PARAM_PRIMARY_DIAMETER);
-
-        double width =
-            widthParameter != null ? widthParameter.AsDouble() : 0;
-        double height =
-            heightParameter != null ? heightParameter.AsDouble() : 0;
-        double diameter =
-            diameterParameter != null ? diameterParameter.AsDouble() : 0;
         double totalLiningThickness = 2 * fabDuct.LiningThickness;
 
-        double internalWidth = width;
-        double internalHeight = height;
-        double internalDiameter = diameter;
+        double[] internalWidth = {
+            sharedParameters[SHARED_PARAM_WIDTH_1] - totalLiningThickness,
+            sharedParameters[SHARED_PARAM_WIDTH_2] - totalLiningThickness,
+            sharedParameters[SHARED_PARAM_WIDTH_3] - totalLiningThickness
+        };
+        double[] internalHeight = {
+            sharedParameters[SHARED_PARAM_HEIGHT_1] - totalLiningThickness,
+            sharedParameters[SHARED_PARAM_HEIGHT_2] - totalLiningThickness,
+            sharedParameters[SHARED_PARAM_HEIGHT_3] - totalLiningThickness
+        };
+        double internalDiameter =
+            sharedParameters[SHARED_PARAM_DIAMETER_1] - totalLiningThickness;
 
-        if (width > totalLiningThickness)
-            internalWidth -= totalLiningThickness;
+        double smallestArea = double.MaxValue;
+        int smallestAreaIndex = 0;
 
-        if (height > totalLiningThickness)
-            internalHeight -= totalLiningThickness;
+        for (int i = 0; i < internalWidth.Length; i++)
+        {
+            double internalArea = internalWidth[i] * internalHeight[i];
 
-        if (diameter > totalLiningThickness)
-            internalDiameter -= totalLiningThickness;
+            if (internalArea > 0 && internalArea < smallestArea)
+            {
+                smallestArea = internalArea;
+                smallestAreaIndex = i;
+            }
+        }
 
-        Set(SHARED_PARAM_INTERNAL_WIDTH, internalWidth);
-        Set(SHARED_PARAM_INTERNAL_HEIGHT, internalHeight);
+        Set(SHARED_PARAM_INTERNAL_WIDTH, internalWidth[smallestAreaIndex]);
+        Set(SHARED_PARAM_INTERNAL_HEIGHT, internalHeight[smallestAreaIndex]);
         Set(SHARED_PARAM_INTERNAL_DIAMETER, internalDiameter);
     }
 
