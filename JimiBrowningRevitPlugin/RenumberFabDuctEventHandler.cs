@@ -13,6 +13,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
     private readonly RenumberFabDuctSettings settings =
         RenumberFabDuctSettings.Instance;
 
+    private Elements elements;
     private GraphicOverrides graphicsOverrides;
 
     public void Execute(UIApplication uiApplication)
@@ -20,6 +21,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
         UIDocument uiDocument = uiApplication.ActiveUIDocument;
         Document document = uiDocument.Document;
 
+        elements = new Elements(uiDocument);
         graphicsOverrides = new GraphicOverrides(document);
 
         RenumberFabDuctForm.DisableSettings();
@@ -42,21 +44,20 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
 
         // TODO: Hide non duct parts
 
-        List<string> itemNumbers = Elements.GetAllFabDuctItemNumbers(document);
+        List<string> itemNumbers = elements.GetAllFabDuctItemNumbers();
 
         while (true)
         {
             HashSet<ElementIdValue> overridenFabDuctIds =
                 graphicsOverrides.GetOverridenFabDuctIds();
-            FabricationPart fabDuct = Elements.SelectFabDuct(
-                uiDocument,
+            FabricationPart fabDuct = elements.SelectFabDuct(
                 settings.LockAllWithItemNumber,
                 overridenFabDuctIds);
 
             if (fabDuct == null)
                 break;
 
-            string previousItemNumber = Elements.GetFabDuctItemNumber(fabDuct);
+            string previousItemNumber = elements.GetFabDuctItemNumber(fabDuct);
             if (previousItemNumber != "")
                 itemNumbers.Remove(previousItemNumber);
 
@@ -81,7 +82,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                 continue;
             }
 
-            if (Elements.SetFabDuctItemNumber(document, fabDuct, itemNumber))
+            if (elements.SetFabDuctItemNumber(fabDuct, itemNumber))
             {
                 itemNumbers.Add(itemNumber);
             }

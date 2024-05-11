@@ -21,13 +21,17 @@ internal class SyncParametersCommand : IExternalCommand
     private readonly SharedParameters sharedParameters = new();
 
     private Document document;
+    private Elements elements;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
         ref string message,
         ElementSet elementSet)
     {
-        document = externalCommandData.Application.ActiveUIDocument.Document;
+        UIDocument uiDocument =
+            externalCommandData.Application.ActiveUIDocument;
+        document = uiDocument.Document;
+        elements = new Elements(uiDocument);
 
         using var transactionGroup = new TransactionGroup(document);
         transactionGroup.Start(Name);
@@ -79,8 +83,7 @@ internal class SyncParametersCommand : IExternalCommand
     {
         var changeCount = new ChangeCount(0, 0);
 
-        IEnumerable<FabricationPart> fabDucts =
-            Elements.GetAllFabDucts(document);
+        IEnumerable<FabricationPart> fabDucts = elements.GetAllFabDucts();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync fab duct parameters");
@@ -139,7 +142,7 @@ internal class SyncParametersCommand : IExternalCommand
     {
         var changeCount = new ChangeCount(0, 0);
 
-        IEnumerable<Element> grilles = Elements.GetAllGrilles(document);
+        IEnumerable<Element> grilles = elements.GetAllGrilles();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync grilles spigot sizes");
@@ -208,17 +211,17 @@ internal class SyncParametersCommand : IExternalCommand
     {
         var changeCount = new ChangeCount(0, 0);
 
-        IEnumerable<Level> levels = Elements.GetAllLevels(document);
+        IEnumerable<Level> levels = elements.GetAllLevels();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync element levels");
 
         foreach (Level level in levels)
         {
-            IEnumerable<Element> elements =
-                Elements.GetAllElementsOfLevel(document, level.Id);
+            IEnumerable<Element> elementsInLevel =
+                elements.GetAllElementsOfLevel(level.Id);
 
-            foreach (Element element in elements)
+            foreach (Element element in elementsInLevel)
             {
                 bool hasChanges = false;
 

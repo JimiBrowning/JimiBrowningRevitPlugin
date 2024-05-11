@@ -9,8 +9,16 @@ namespace JimiBrowningRevitPlugin;
 
 internal class Elements
 {
-    internal static FabricationPart SelectFabDuct(
-        UIDocument uiDocument,
+    private readonly UIDocument uiDocument;
+    private readonly Document document;
+
+    internal Elements(UIDocument uiDocument)
+    {
+        this.uiDocument = uiDocument;
+        document = uiDocument.Document;
+    }
+
+    internal FabricationPart SelectFabDuct(
         bool lockAllWithItemNumber,
         HashSet<ElementIdValue> lockElementIds)
     {
@@ -32,8 +40,7 @@ internal class Elements
         }
     }
 
-    internal static IEnumerable<FabricationPart>
-        GetAllFabDucts(Document document)
+    internal IEnumerable<FabricationPart> GetAllFabDucts()
     {
         var collector = new FilteredElementCollector(document);
         var filter = new ElementCategoryFilter(
@@ -47,8 +54,7 @@ internal class Elements
         return allFabDucts;
     }
 
-    internal static IEnumerable<FabricationPart>
-        GetAllFabDuctsWithItemNumber(Document document)
+    internal IEnumerable<FabricationPart> GetAllFabDuctsWithItemNumber()
     {
         var collector = new FilteredElementCollector(document);
 
@@ -76,8 +82,8 @@ internal class Elements
         return fabDucts;
     }
 
-    internal static IEnumerable<FabricationPart>
-        GetAllFabDuctsWithItemNumberPrefix(Document document, string prefix)
+    internal IEnumerable<FabricationPart>
+        GetAllFabDuctsWithItemNumberPrefix(string prefix)
     {
         var collector = new FilteredElementCollector(document);
 
@@ -100,57 +106,17 @@ internal class Elements
         return fabDucts;
     }
 
-    internal static IEnumerable<Element> GetAllGrilles(Document document)
-    {
-        var collector = new FilteredElementCollector(document);
-        var filter = new ElementCategoryFilter(
-            BuiltInCategory.OST_DuctTerminal);
-        IEnumerable<Element> grilles =
-            collector
-            .WherePasses(filter)
-            .WhereElementIsNotElementType();
-
-        return grilles;
-    }
-
-    internal static IEnumerable<Level> GetAllLevels(Document document)
-    {
-        var collector = new FilteredElementCollector(document);
-        var filter = new ElementClassFilter(typeof(Level));
-        IEnumerable<Level> levels =
-            collector
-            .WherePasses(filter)
-            .ToElements()
-            .Cast<Level>();
-
-        return levels;
-    }
-
-    internal static IEnumerable<Element>
-        GetAllElementsOfLevel(Document document, ElementId levelId)
-    {
-        var collector = new FilteredElementCollector(document);
-        var filter = new ElementLevelFilter(levelId);
-        IEnumerable<Element> elements =
-            collector
-            .WherePasses(filter)
-            .WhereElementIsNotElementType();
-
-        return elements;
-    }
-
-    internal static string GetFabDuctItemNumber(FabricationPart fabDuct)
+    internal string GetFabDuctItemNumber(FabricationPart fabDuct)
     {
         Parameter itemNumberParameter = fabDuct.get_Parameter(
             BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
         return itemNumberParameter.AsString();
     }
 
-    internal static List<string> GetAllFabDuctItemNumbers(Document document)
+    internal List<string> GetAllFabDuctItemNumbers()
     {
         var itemNumbers = new List<string>();
-        IEnumerable<FabricationPart> fabDucts =
-            GetAllFabDuctsWithItemNumber(document);
+        IEnumerable<FabricationPart> fabDucts = GetAllFabDuctsWithItemNumber();
 
         foreach (FabricationPart fabDuct in fabDucts)
         {
@@ -163,13 +129,12 @@ internal class Elements
         return itemNumbers;
     }
 
-    internal static int
-        GetHighestItemNumberWithPrefix(Document document, string prefix)
+    internal int GetHighestItemNumberWithPrefix(string prefix)
     {
         int highestNumber = 0;
 
         IEnumerable<FabricationPart> fabDucts =
-            GetAllFabDuctsWithItemNumberPrefix(document, prefix);
+            GetAllFabDuctsWithItemNumberPrefix(prefix);
 
         foreach (FabricationPart fabDuct in fabDucts)
         {
@@ -196,8 +161,7 @@ internal class Elements
         return highestNumber;
     }
 
-    internal static bool SetFabDuctItemNumber(
-        Document document,
+    internal bool SetFabDuctItemNumber(
         FabricationPart fabDuct,
         string itemNumber)
     {
@@ -209,5 +173,43 @@ internal class Elements
         itemNumberParameter.Set(itemNumber);
 
         return transaction.Commit() == TransactionStatus.Committed;
+    }
+
+    internal IEnumerable<Element> GetAllGrilles()
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter = new ElementCategoryFilter(
+            BuiltInCategory.OST_DuctTerminal);
+        IEnumerable<Element> grilles =
+            collector
+            .WherePasses(filter)
+            .WhereElementIsNotElementType();
+
+        return grilles;
+    }
+
+    internal IEnumerable<Level> GetAllLevels()
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter = new ElementClassFilter(typeof(Level));
+        IEnumerable<Level> levels =
+            collector
+            .WherePasses(filter)
+            .ToElements()
+            .Cast<Level>();
+
+        return levels;
+    }
+
+    internal IEnumerable<Element> GetAllElementsOfLevel(ElementId levelId)
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter = new ElementLevelFilter(levelId);
+        IEnumerable<Element> elements =
+            collector
+            .WherePasses(filter)
+            .WhereElementIsNotElementType();
+
+        return elements;
     }
 }

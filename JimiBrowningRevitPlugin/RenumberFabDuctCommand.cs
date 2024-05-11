@@ -20,7 +20,7 @@ internal class RenumberFabDuctCommand : IExternalCommand
     private readonly ExternalEvent renumberFabDuctEvent =
         ExternalEvent.Create(new RenumberFabDuctEventHandler());
 
-    private Document document;
+    private Elements elements;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
@@ -30,7 +30,8 @@ internal class RenumberFabDuctCommand : IExternalCommand
         if (RenumberFabDuctForm.IsOpened())
             return Result.Failed;
 
-        document = externalCommandData.Application.ActiveUIDocument.Document;
+        elements =
+            new Elements(externalCommandData.Application.ActiveUIDocument);
 
         RenumberFabDuctForm.ShowForm(
             GetHighestItemNumberCallback,
@@ -42,7 +43,7 @@ internal class RenumberFabDuctCommand : IExternalCommand
     private int GetHighestItemNumberCallback(string itemNumberPrefix)
     {
         int highestNumber =
-            Elements.GetHighestItemNumberWithPrefix(document, itemNumberPrefix);
+            elements.GetHighestItemNumberWithPrefix(itemNumberPrefix);
 
         return highestNumber;
     }
