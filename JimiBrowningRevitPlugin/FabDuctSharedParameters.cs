@@ -6,132 +6,132 @@ namespace JimiBrowningRevitPlugin;
 internal class FabDuctSharedParameters
 {
 #if REVIT2023_OR_GREATER
-    private const string FAB_PARAM_BOTTOM = "Lower End Bottom Elevation";
+    private const string FabParamBottom = "Lower End Bottom Elevation";
 #else
-    private const string FAB_PARAM_BOTTOM = "Bottom";
+    private const string FabParamBottom = "Bottom";
 #endif
 
-    private const string DIMENSION_WIDTH = "Width";
-    private const string DIMENSION_DEPTH = "Depth";
-    private const string DIMENSION_WIDTH_IN = "Width In";
-    private const string DIMENSION_DEPTH_IN = "Depth In";
-    private const string DIMENSION_WIDTH_OUT = "Width Out";
-    private const string DIMENSION_DEPTH_OUT = "Depth Out";
-    private const string DIMENSION_BOTTOM_WIDTH = "Btm Width";
-    private const string DIMENSION_BOTTOM_DEPTH = "Btm Depth";
-    private const string DIMENSION_TOP_WIDTH = "Top Width";
-    private const string DIMENSION_LEFT_WIDTH = "Left Width";
-    private const string DIMENSION_RIGHT_WIDTH = "Right Width";
-    private const string DIMENSION_INNER_RADIUS = "Inner Radius";
-    private const string DIMENSION_OUTER_RADIUS = "Outer Radius";
-    private const string DIMENSION_LEFT_RADIUS = "Left Radius";
-    private const string DIMENSION_RIGHT_RADIUS = "Right Radius";
-    private const string DIMENSION_DIAMETER = "Diameter";
-    private const string DIMENSION_TOP_EXTENSION = "Top Extension";
-    private const string DIMENSION_TOP_INNER_EXTENSION = "Top Inner Extension";
-    private const string DIMENSION_BOTTOM_EXTENSION = "Bottom Extension";
-    private const string DIMENSION_DUCT_WIDTH = "Duct Width";
-    private const string DIMENSION_DUCT_DEPTH = "Duct Depth";
-    private const string DIMENSION_STEP_IN_WIDTH = "Step in Width";
-    private const string DIMENSION_STEP_IN_DEPTH = "Step In Depth";
-    private const string DIMENSION_BRANCH_WIDTH = "Branch Width";
-    private const string DIMENSION_BRANCH_DEPTH = "Branch Depth";
-    private const string DIMENSION_BRANCH_WIDTH_1 = "Branch Width #1";
-    private const string DIMENSION_BRANCH_DEPTH_1 = "Branch Depth #1";
+    private const string DimensionWidth = "Width";
+    private const string DimensionDepth = "Depth";
+    private const string DimensionWidthIn = "Width In";
+    private const string DimensionDepthIn = "Depth In";
+    private const string DimensionWidthOut = "Width Out";
+    private const string DimensionDepthOut = "Depth Out";
+    private const string DimensionBottomWidth = "Btm Width";
+    private const string DimensionBottomDepth = "Btm Depth";
+    private const string DimensionTopWidth = "Top Width";
+    private const string DimensionLeftWidth = "Left Width";
+    private const string DimensionRightWidth = "Right Width";
+    private const string DimensionInnerRadius = "Inner Radius";
+    private const string DimensionOuterRadius = "Outer Radius";
+    private const string DimensionLeftRadius = "Left Radius";
+    private const string DimensionRightRadius = "Right Radius";
+    private const string DimensionDiameter = "Diameter";
+    private const string DimensionTopExtension = "Top Extension";
+    private const string DimensionTopInnerExtension = "Top Inner Extension";
+    private const string DimensionBottomExtension = "Bottom Extension";
+    private const string DimensionDuctWidth = "Duct Width";
+    private const string DimensionDuctDepth = "Duct Depth";
+    private const string DimensionStepInWidth = "Step in Width";
+    private const string DimensionStepInDepth = "Step In Depth";
+    private const string DimensionBranchWidth = "Branch Width";
+    private const string DimensionBranchDepth = "Branch Depth";
+    private const string DimensionBranchWidth1 = "Branch Width #1";
+    private const string DimensionBranchDepth1 = "Branch Depth #1";
 
-    private const string SHARED_PARAM_WIDTH_1 = "FAB WIDTH 1";
-    private const string SHARED_PARAM_WIDTH_2 = "FAB WIDTH 2";
-    private const string SHARED_PARAM_WIDTH_3 = "FAB WIDTH 3";
-    private const string SHARED_PARAM_HEIGHT_1 = "FAB HEIGHT 1";
-    private const string SHARED_PARAM_HEIGHT_2 = "FAB HEIGHT 2";
-    private const string SHARED_PARAM_HEIGHT_3 = "FAB HEIGHT 3";
-    private const string SHARED_PARAM_DIAMETER_1 = "FAB DIAMETER 1";
-    private const string SHARED_PARAM_INTERNAL_WIDTH = "Internal Width";
-    private const string SHARED_PARAM_INTERNAL_HEIGHT = "Internal Height";
-    private const string SHARED_PARAM_INTERNAL_DIAMETER = "Internal Diameter";
-    private const string SHARED_PARAM_RADIUS = "Actual Radius";
-    private const string SHARED_PARAM_RADIUS_1 = "FAB RADIUS 1";
-    private const string SHARED_PARAM_RADIUS_2 = "FAB RADIUS 2";
-    private const string SHARED_PARAM_RADIUS_3 = "FAB RADIUS 3";
-    private const string SHARED_PARAM_SQ_BEND_BE = "Sq Bend BE";
-    private const string SHARED_PARAM_SQ_BEND_TE = "Sq Bend TE";
-    private const string SHARED_PARAM_BOTTOM_LEVEL = "Bottom Level";
+    private const string SharedParamWidth1 = "FAB WIDTH 1";
+    private const string SharedParamWidth2 = "FAB WIDTH 2";
+    private const string SharedParamWidth3 = "FAB WIDTH 3";
+    private const string SharedParamHeight1 = "FAB HEIGHT 1";
+    private const string SharedParamHeight2 = "FAB HEIGHT 2";
+    private const string SharedParamHeight3 = "FAB HEIGHT 3";
+    private const string SharedParamDiameter1 = "FAB DIAMETER 1";
+    private const string SharedParamInternalWidth = "Internal Width";
+    private const string SharedParamInternalHeight = "Internal Height";
+    private const string SharedParamInternalDiameter = "Internal Diameter";
+    private const string SharedParamRadius = "Actual Radius";
+    private const string SharedParamRadius1 = "FAB RADIUS 1";
+    private const string SharedParamRadius2 = "FAB RADIUS 2";
+    private const string SharedParamRadius3 = "FAB RADIUS 3";
+    private const string SharedParamSqBendBe = "Sq Bend BE";
+    private const string SharedParamSqBendTe = "Sq Bend TE";
+    private const string SharedParamBottomLevel = "Bottom Level";
 
     private static readonly Dictionary<string, List<string>>
-        dimensionToSharedParamMap;
-
-    private readonly Dictionary<string, double> sharedParameters;
+        DimensionToSharedParamMap;
 
     internal IReadOnlyDictionary<string, double> SharedParameters
     {
         get { return sharedParameters; }
     }
 
+    private readonly Dictionary<string, double> sharedParameters;
+
     static FabDuctSharedParameters()
     {
-        dimensionToSharedParamMap = new Dictionary<string, List<string>>()
+        DimensionToSharedParamMap = new Dictionary<string, List<string>>()
         {
-            { DIMENSION_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_1,
-                SHARED_PARAM_WIDTH_2 ,
-                SHARED_PARAM_WIDTH_3} },
-            { DIMENSION_DEPTH, new List<string>{
-                SHARED_PARAM_HEIGHT_1,
-                SHARED_PARAM_HEIGHT_2,
-                SHARED_PARAM_HEIGHT_3 } },
-            { DIMENSION_WIDTH_IN, new List<string>{
-                SHARED_PARAM_WIDTH_1 } },
-            { DIMENSION_DEPTH_IN, new List<string>{
-                SHARED_PARAM_HEIGHT_1 } },
-            { DIMENSION_WIDTH_OUT, new List<string>{
-                SHARED_PARAM_WIDTH_2 } },
-            { DIMENSION_DEPTH_OUT, new List<string>{
-                SHARED_PARAM_HEIGHT_2 } },
-            { DIMENSION_BOTTOM_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_1 } },
-            { DIMENSION_BOTTOM_DEPTH, new List<string>{
-                SHARED_PARAM_HEIGHT_1,
-                SHARED_PARAM_HEIGHT_2,
-                SHARED_PARAM_HEIGHT_3 } },
-            { DIMENSION_TOP_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_2 } },
-            { DIMENSION_LEFT_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_2 } },
-            { DIMENSION_RIGHT_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_3 } },
-            { DIMENSION_INNER_RADIUS, new List<string>{
-                SHARED_PARAM_RADIUS,
-                SHARED_PARAM_RADIUS_1 } },
-            { DIMENSION_OUTER_RADIUS, new List<string>{
-                SHARED_PARAM_RADIUS_2 } },
-            { DIMENSION_LEFT_RADIUS, new List<string>{
-                SHARED_PARAM_RADIUS_2 } },
-            { DIMENSION_RIGHT_RADIUS, new List<string>{
-                SHARED_PARAM_RADIUS_3 } },
-            { DIMENSION_DIAMETER, new List<string>{
-                SHARED_PARAM_DIAMETER_1 } },
-            { DIMENSION_TOP_EXTENSION, new List<string>{
-                SHARED_PARAM_SQ_BEND_TE } },
-            { DIMENSION_TOP_INNER_EXTENSION, new List<string>{
-                SHARED_PARAM_SQ_BEND_TE } },
-            { DIMENSION_BOTTOM_EXTENSION, new List<string>{
-                SHARED_PARAM_SQ_BEND_BE } },
-            { DIMENSION_DUCT_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_1 } },
-            { DIMENSION_DUCT_DEPTH, new List<string>{
-                SHARED_PARAM_HEIGHT_1 } },
-            { DIMENSION_STEP_IN_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_2 } },
-            { DIMENSION_STEP_IN_DEPTH, new List<string>{
-                SHARED_PARAM_HEIGHT_2 } },
-            { DIMENSION_BRANCH_WIDTH, new List<string>{
-                SHARED_PARAM_WIDTH_1 } },
-            { DIMENSION_BRANCH_DEPTH, new List<string>{
-                SHARED_PARAM_HEIGHT_1 } },
-            { DIMENSION_BRANCH_WIDTH_1, new List<string>{
-                SHARED_PARAM_WIDTH_1 } },
-            { DIMENSION_BRANCH_DEPTH_1, new List<string>{
-                SHARED_PARAM_HEIGHT_1 } }
+            { DimensionWidth, new List<string>{
+                SharedParamWidth1,
+                SharedParamWidth2 ,
+                SharedParamWidth3} },
+            { DimensionDepth, new List<string>{
+                SharedParamHeight1,
+                SharedParamHeight2,
+                SharedParamHeight3 } },
+            { DimensionWidthIn, new List<string>{
+                SharedParamWidth1 } },
+            { DimensionDepthIn, new List<string>{
+                SharedParamHeight1 } },
+            { DimensionWidthOut, new List<string>{
+                SharedParamWidth2 } },
+            { DimensionDepthOut, new List<string>{
+                SharedParamHeight2 } },
+            { DimensionBottomWidth, new List<string>{
+                SharedParamWidth1 } },
+            { DimensionBottomDepth, new List<string>{
+                SharedParamHeight1,
+                SharedParamHeight2,
+                SharedParamHeight3 } },
+            { DimensionTopWidth, new List<string>{
+                SharedParamWidth2 } },
+            { DimensionLeftWidth, new List<string>{
+                SharedParamWidth2 } },
+            { DimensionRightWidth, new List<string>{
+                SharedParamWidth3 } },
+            { DimensionInnerRadius, new List<string>{
+                SharedParamRadius,
+                SharedParamRadius1 } },
+            { DimensionOuterRadius, new List<string>{
+                SharedParamRadius2 } },
+            { DimensionLeftRadius, new List<string>{
+                SharedParamRadius2 } },
+            { DimensionRightRadius, new List<string>{
+                SharedParamRadius3 } },
+            { DimensionDiameter, new List<string>{
+                SharedParamDiameter1 } },
+            { DimensionTopExtension, new List<string>{
+                SharedParamSqBendTe } },
+            { DimensionTopInnerExtension, new List<string>{
+                SharedParamSqBendTe } },
+            { DimensionBottomExtension, new List<string>{
+                SharedParamSqBendBe } },
+            { DimensionDuctWidth, new List<string>{
+                SharedParamWidth1 } },
+            { DimensionDuctDepth, new List<string>{
+                SharedParamHeight1 } },
+            { DimensionStepInWidth, new List<string>{
+                SharedParamWidth2 } },
+            { DimensionStepInDepth, new List<string>{
+                SharedParamHeight2 } },
+            { DimensionBranchWidth, new List<string>{
+                SharedParamWidth1 } },
+            { DimensionBranchDepth, new List<string>{
+                SharedParamHeight1 } },
+            { DimensionBranchWidth1, new List<string>{
+                SharedParamWidth1 } },
+            { DimensionBranchDepth1, new List<string>{
+                SharedParamHeight1 } }
         };
     }
 
@@ -139,23 +139,23 @@ internal class FabDuctSharedParameters
     {
         sharedParameters = new Dictionary<string, double>()
         {
-            { SHARED_PARAM_WIDTH_1, 0 },
-            { SHARED_PARAM_WIDTH_2, 0 },
-            { SHARED_PARAM_WIDTH_3, 0 },
-            { SHARED_PARAM_HEIGHT_1, 0 },
-            { SHARED_PARAM_HEIGHT_2, 0 },
-            { SHARED_PARAM_HEIGHT_3, 0 },
-            { SHARED_PARAM_DIAMETER_1, 0 },
-            { SHARED_PARAM_INTERNAL_WIDTH, 0 },
-            { SHARED_PARAM_INTERNAL_HEIGHT, 0 },
-            { SHARED_PARAM_INTERNAL_DIAMETER, 0 },
-            { SHARED_PARAM_RADIUS, 0 },
-            { SHARED_PARAM_RADIUS_1, 0 },
-            { SHARED_PARAM_RADIUS_2, 0 },
-            { SHARED_PARAM_RADIUS_3, 0 },
-            { SHARED_PARAM_SQ_BEND_BE, 0 },
-            { SHARED_PARAM_SQ_BEND_TE, 0 },
-            { SHARED_PARAM_BOTTOM_LEVEL, 0 }
+            { SharedParamWidth1, 0 },
+            { SharedParamWidth2, 0 },
+            { SharedParamWidth3, 0 },
+            { SharedParamHeight1, 0 },
+            { SharedParamHeight2, 0 },
+            { SharedParamHeight3, 0 },
+            { SharedParamDiameter1, 0 },
+            { SharedParamInternalWidth, 0 },
+            { SharedParamInternalHeight, 0 },
+            { SharedParamInternalDiameter, 0 },
+            { SharedParamRadius, 0 },
+            { SharedParamRadius1, 0 },
+            { SharedParamRadius2, 0 },
+            { SharedParamRadius3, 0 },
+            { SharedParamSqBendBe, 0 },
+            { SharedParamSqBendTe, 0 },
+            { SharedParamBottomLevel, 0 }
         };
     }
 
@@ -172,7 +172,7 @@ internal class FabDuctSharedParameters
             fabDuct.GetDimensions();
         foreach (FabricationDimensionDefinition dimension in dimensions)
         {
-            if (dimensionToSharedParamMap.TryGetValue(
+            if (DimensionToSharedParamMap.TryGetValue(
                 dimension.Name,
                 out List<string> sharedParameters))
             {
@@ -190,17 +190,17 @@ internal class FabDuctSharedParameters
         double totalLiningThickness = 2 * fabDuct.LiningThickness;
 
         double[] internalWidth = {
-            sharedParameters[SHARED_PARAM_WIDTH_1] - totalLiningThickness,
-            sharedParameters[SHARED_PARAM_WIDTH_2] - totalLiningThickness,
-            sharedParameters[SHARED_PARAM_WIDTH_3] - totalLiningThickness
+            sharedParameters[SharedParamWidth1] - totalLiningThickness,
+            sharedParameters[SharedParamWidth2] - totalLiningThickness,
+            sharedParameters[SharedParamWidth3] - totalLiningThickness
         };
         double[] internalHeight = {
-            sharedParameters[SHARED_PARAM_HEIGHT_1] - totalLiningThickness,
-            sharedParameters[SHARED_PARAM_HEIGHT_2] - totalLiningThickness,
-            sharedParameters[SHARED_PARAM_HEIGHT_3] - totalLiningThickness
+            sharedParameters[SharedParamHeight1] - totalLiningThickness,
+            sharedParameters[SharedParamHeight2] - totalLiningThickness,
+            sharedParameters[SharedParamHeight3] - totalLiningThickness
         };
         double internalDiameter =
-            sharedParameters[SHARED_PARAM_DIAMETER_1] - totalLiningThickness;
+            sharedParameters[SharedParamDiameter1] - totalLiningThickness;
 
         double smallestArea = double.MaxValue;
         int smallestAreaIndex = 0;
@@ -216,20 +216,20 @@ internal class FabDuctSharedParameters
             }
         }
 
-        Set(SHARED_PARAM_INTERNAL_WIDTH, internalWidth[smallestAreaIndex]);
-        Set(SHARED_PARAM_INTERNAL_HEIGHT, internalHeight[smallestAreaIndex]);
-        Set(SHARED_PARAM_INTERNAL_DIAMETER, internalDiameter);
+        Set(SharedParamInternalWidth, internalWidth[smallestAreaIndex]);
+        Set(SharedParamInternalHeight, internalHeight[smallestAreaIndex]);
+        Set(SharedParamInternalDiameter, internalDiameter);
     }
 
     private void SyncBottomLevel(FabricationPart fabDuct)
     {
         Parameter bottomLevelParameter =
-            fabDuct.LookupParameter(FAB_PARAM_BOTTOM);
+            fabDuct.LookupParameter(FabParamBottom);
 
         double bottomLevel =
             bottomLevelParameter != null ? bottomLevelParameter.AsDouble() : 0;
 
-        Set(SHARED_PARAM_BOTTOM_LEVEL, bottomLevel);
+        Set(SharedParamBottomLevel, bottomLevel);
     }
 
     private void Set(string sharedParameter, double value)

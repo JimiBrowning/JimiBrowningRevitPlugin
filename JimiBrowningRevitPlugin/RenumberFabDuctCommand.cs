@@ -7,18 +7,20 @@ namespace JimiBrowningRevitPlugin;
 [Transaction(TransactionMode.Manual)]
 internal class RenumberFabDuctCommand : IExternalCommand
 {
-    internal const string NAME = "Renumber Fab Duct";
-    internal const string TOOL_TIP =
+    internal const string Name = "Renumber Fab Duct";
+    internal const string ToolTip =
         "Renumbers fabrication duct Item Number with prefix and " +
         "auto-incrementing number.";
-    internal static readonly string CLASS_NAME =
+
+    internal static readonly string ClassName =
         typeof(RenumberFabDuctCommand).Namespace
         + "."
         + typeof(RenumberFabDuctCommand).Name;
 
-    private Document document;
     private readonly ExternalEvent renumberFabDuctEvent =
         ExternalEvent.Create(new RenumberFabDuctEventHandler());
+
+    private Document document;
 
     public Result Execute(
         ExternalCommandData externalCommandData,

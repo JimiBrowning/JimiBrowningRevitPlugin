@@ -5,33 +5,33 @@ namespace JimiBrowningRevitPlugin;
 
 internal class ExternalApplication : IExternalApplication
 {
-    private const string TAB_NAME = "Jimi Browning";
-    private const string PANEL_NAME = "Jimi Browning";
+    private const string TabName = "Jimi Browning";
+    private const string PanelName = "Jimi Browning";
 
     public Result OnStartup(UIControlledApplication application)
     {
         // TODO: Add button icons
-        application.CreateRibbonTab(TAB_NAME);
+        application.CreateRibbonTab(TabName);
         RibbonPanel ribbonPanel =
-            application.CreateRibbonPanel(TAB_NAME, PANEL_NAME);
+            application.CreateRibbonPanel(TabName, PanelName);
 
         string assemblyName = Assembly.GetExecutingAssembly().Location;
 
         PushButton syncParametersButton = ribbonPanel.AddItem(
             new PushButtonData(
-                SyncParametersCommand.NAME,
-                SyncParametersCommand.NAME,
+                SyncParametersCommand.Name,
+                SyncParametersCommand.Name,
                 assemblyName,
-                SyncParametersCommand.CLASS_NAME)) as PushButton;
-        syncParametersButton.ToolTip = SyncParametersCommand.TOOL_TIP;
+                SyncParametersCommand.ClassName)) as PushButton;
+        syncParametersButton.ToolTip = SyncParametersCommand.ToolTip;
 
         PushButton renumberFabDuctButton = ribbonPanel.AddItem(
             new PushButtonData(
-                RenumberFabDuctCommand.NAME,
-                RenumberFabDuctCommand.NAME,
+                RenumberFabDuctCommand.Name,
+                RenumberFabDuctCommand.Name,
                 assemblyName,
-                RenumberFabDuctCommand.CLASS_NAME)) as PushButton;
-        renumberFabDuctButton.ToolTip = RenumberFabDuctCommand.TOOL_TIP;
+                RenumberFabDuctCommand.ClassName)) as PushButton;
+        renumberFabDuctButton.ToolTip = RenumberFabDuctCommand.ToolTip;
 
         return Result.Succeeded;
     }

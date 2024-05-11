@@ -5,11 +5,11 @@
 
 public class RenumberFabDuctSettings
 {
-    internal const string DEFAULT_ITEM_NUMBER_PREFIX = "";
-    internal const int DEFAULT_ITEM_NUMBER_COUNT = 1;
-    internal const bool DEFAULT_PREVENT_DUPLICATES = true;
-    internal const bool DEFAULT_LOCK_CURRENT = true;
-    internal const bool DEFAULT_LOCK_ALL_WITH_ITEM_NUMBER = true;
+    internal const string DefaultItemNumberPrefix = "";
+    internal const int DefaultItemNumberCount = 1;
+    internal const bool DefaultPreventDuplicates = true;
+    internal const bool DefaultLockCurrent = true;
+    internal const bool DefaultLockAllWithItemNumber = true;
 
     public static RenumberFabDuctSettings Instance
     {
@@ -17,7 +17,7 @@ public class RenumberFabDuctSettings
         {
             if (instance == null)
             {
-                lock (lockObject)
+                lock (LockObject)
                 {
                     instance ??= new RenumberFabDuctSettings();
                 }
@@ -27,22 +27,23 @@ public class RenumberFabDuctSettings
         }
     }
 
-    private static readonly object lockObject = new();
+    private static readonly object LockObject = new();
+
     private static RenumberFabDuctSettings instance = null;
 
     public bool PreventDuplicates { get; internal set; } =
-        DEFAULT_PREVENT_DUPLICATES;
+        DefaultPreventDuplicates;
     public bool LockCurrent { get; internal set; } =
-        DEFAULT_LOCK_CURRENT;
+        DefaultLockCurrent;
     public bool LockAllWithItemNumber { get; internal set; } =
-        DEFAULT_LOCK_ALL_WITH_ITEM_NUMBER;
+        DefaultLockAllWithItemNumber;
     public string ItemNumber
     {
         get { return itemNumberPrefix + itemNumberCount.ToString(); }
     }
 
-    internal string itemNumberPrefix = DEFAULT_ITEM_NUMBER_PREFIX;
-    internal int itemNumberCount = DEFAULT_ITEM_NUMBER_COUNT;
+    internal string itemNumberPrefix = DefaultItemNumberPrefix;
+    internal int itemNumberCount = DefaultItemNumberCount;
 
     private OnItemNumberIncrementedCallback
         onItemNumberIncrementedCallback = null;
@@ -52,7 +53,7 @@ public class RenumberFabDuctSettings
         if (itemNumberCount < int.MaxValue)
             itemNumberCount++;
         else
-            itemNumberCount = DEFAULT_ITEM_NUMBER_COUNT;
+            itemNumberCount = DefaultItemNumberCount;
 
         onItemNumberIncrementedCallback?.Invoke(itemNumberCount);
     }

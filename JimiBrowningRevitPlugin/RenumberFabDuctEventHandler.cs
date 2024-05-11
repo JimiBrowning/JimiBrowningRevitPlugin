@@ -8,10 +8,11 @@ namespace JimiBrowningRevitPlugin;
 
 internal class RenumberFabDuctEventHandler : IExternalEventHandler
 {
-    internal const string NAME = "Renumber Fab Duct";
+    internal const string Name = "Renumber Fab Duct";
 
     private readonly RenumberFabDuctSettings settings =
         RenumberFabDuctSettings.Instance;
+
     private GraphicOverrides graphicsOverrides;
 
     public void Execute(UIApplication uiApplication)
@@ -24,13 +25,13 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
         RenumberFabDuctForm.DisableSettings();
 
         using var transactionGroup = new TransactionGroup(document);
-        transactionGroup.Start(NAME);
+        transactionGroup.Start(Name);
 
         if (settings.LockAllWithItemNumber)
         {
             if (!graphicsOverrides.FadeFabDuctsWithItemNumber())
             {
-                new TaskDialog(NAME)
+                new TaskDialog(Name)
                 {
                     MainContent = "Failed to commit transaction. Element " +
                     "graphic settings not overridden.",
@@ -65,7 +66,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                     itemNumber,
                     StringComparer.OrdinalIgnoreCase))
             {
-                new TaskDialog(NAME)
+                new TaskDialog(Name)
                 {
                     MainContent = "Item number \"" +
                     itemNumber + "\" exists. Please " +
@@ -86,7 +87,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
             }
             else
             {
-                new TaskDialog(NAME)
+                new TaskDialog(Name)
                 {
                     MainContent = "Failed to commit transaction. Item Number " +
                     "not set.",
@@ -105,7 +106,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
             {
                 if (!graphicsOverrides.FadeFabDuct(fabDuct))
                 {
-                    new TaskDialog(NAME)
+                    new TaskDialog(Name)
                     {
                         MainContent = "Failed to commit transaction. Element " +
                         "graphic settings not overridden.",
@@ -122,7 +123,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
         }
         else
         {
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Failed to commit transaction. Could not " +
                 "revert graphic overrides. Rolling back renumbering command.",

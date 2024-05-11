@@ -9,16 +9,18 @@ namespace JimiBrowningRevitPlugin;
 [Transaction(TransactionMode.Manual)]
 internal class SyncParametersCommand : IExternalCommand
 {
-    internal const string NAME = "Sync Parameters";
-    internal const string TOOL_TIP =
+    internal const string Name = "Sync Parameters";
+    internal const string ToolTip =
         "Syncs inaccessible parameters to shared parameters.";
-    internal static readonly string CLASS_NAME =
+
+    internal static readonly string ClassName =
         typeof(SyncParametersCommand).Namespace
         + "."
         + typeof(SyncParametersCommand).Name;
 
-    private Document document;
     private readonly SharedParameters sharedParameters = new();
+
+    private Document document;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
@@ -28,7 +30,7 @@ internal class SyncParametersCommand : IExternalCommand
         document = externalCommandData.Application.ActiveUIDocument.Document;
 
         using var transactionGroup = new TransactionGroup(document);
-        transactionGroup.Start(NAME);
+        transactionGroup.Start(Name);
 
         var changeCount = new ChangeCount(0, 0);
         changeCount += SyncFabDuctParameters();
@@ -41,7 +43,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             string missingParameters =
                 string.Join(", ", sharedParameters.GetMissingParameters());
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Warning! Following shared parameter(s) are " +
                 "missing: " + missingParameters,
@@ -53,7 +55,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             string readOnlyParameters =
                 string.Join(", ", sharedParameters.GetReadOnlyParameters());
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Warning! Following shared parameter(s) are " +
                 "read-only: " + readOnlyParameters,
@@ -61,7 +63,7 @@ internal class SyncParametersCommand : IExternalCommand
             }.Show();
         }
 
-        new TaskDialog(NAME)
+        new TaskDialog(Name)
         {
             MainContent = "Sync complete. " +
             changeCount.parameterChangeCount.ToString() + " change(s) to " +
@@ -120,7 +122,7 @@ internal class SyncParametersCommand : IExternalCommand
 
         if (transaction.Commit() != TransactionStatus.Committed)
         {
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Failed to commit transaction. Fab duct " +
                 "parameters not synced.",
@@ -189,7 +191,7 @@ internal class SyncParametersCommand : IExternalCommand
 
         if (transaction.Commit() != TransactionStatus.Committed)
         {
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Failed to commit transaction. Spigot sizes " +
                 "not synced.",
@@ -265,7 +267,7 @@ internal class SyncParametersCommand : IExternalCommand
 
         if (transaction.Commit() != TransactionStatus.Committed)
         {
-            new TaskDialog(NAME)
+            new TaskDialog(Name)
             {
                 MainContent = "Failed to commit transaction. Element levels " +
                 "not synced.",

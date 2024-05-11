@@ -5,13 +5,15 @@ namespace JimiBrowningRevitPlugin;
 
 public partial class RenumberFabDuctForm : Form
 {
-    private static readonly object lockObject = new();
-    private static RenumberFabDuctForm instance;
-    private static readonly RenumberFabDuctSettings settings =
+    private static readonly object LockObject = new();
+    private static readonly RenumberFabDuctSettings Settings =
         RenumberFabDuctSettings.Instance;
+
+    private static RenumberFabDuctForm instance;
 
     private readonly GetHighestItemNumberCallback getHighestItemNumberCallback;
     private readonly StartRenumberingCallback startRenumberingCallback;
+
     private bool disableCountOnChanged = false;
 
     private RenumberFabDuctForm(
@@ -33,7 +35,7 @@ public partial class RenumberFabDuctForm : Form
         if (instance != null)
             return;
 
-        lock (lockObject)
+        lock (LockObject)
         {
             if (instance != null)
                 return;
@@ -55,7 +57,7 @@ public partial class RenumberFabDuctForm : Form
         if (instance == null)
             return;
 
-        lock (lockObject)
+        lock (LockObject)
         {
             instance?.Close();
         }
@@ -66,7 +68,7 @@ public partial class RenumberFabDuctForm : Form
         if (instance == null)
             return;
 
-        lock (lockObject)
+        lock (LockObject)
         {
             if (instance == null)
                 return;
@@ -84,7 +86,7 @@ public partial class RenumberFabDuctForm : Form
         if (instance == null)
             return;
 
-        lock (lockObject)
+        lock (LockObject)
         {
             if (instance == null)
                 return;
@@ -110,13 +112,13 @@ public partial class RenumberFabDuctForm : Form
 
     private void RenumberFabDuctFormOnLoad(object sender, EventArgs e)
     {
-        prefixTextBox.Text = settings.itemNumberPrefix;
-        countNumericUpDown.Value = settings.itemNumberCount;
-        preventDuplicateCheckBox.Checked = settings.PreventDuplicates;
-        lockCurrentCheckBox.Checked = settings.LockCurrent;
-        lockAllCheckBox.Checked = settings.LockAllWithItemNumber;
+        prefixTextBox.Text = Settings.itemNumberPrefix;
+        countNumericUpDown.Value = Settings.itemNumberCount;
+        preventDuplicateCheckBox.Checked = Settings.PreventDuplicates;
+        lockCurrentCheckBox.Checked = Settings.LockCurrent;
+        lockAllCheckBox.Checked = Settings.LockAllWithItemNumber;
 
-        settings.SetOnItemNumberIncrementedCallback(
+        Settings.SetOnItemNumberIncrementedCallback(
             OnItemNumberIncrementedCallback);
     }
 
@@ -124,14 +126,14 @@ public partial class RenumberFabDuctForm : Form
         object sender,
         FormClosedEventArgs e)
     {
-        settings.SetOnItemNumberIncrementedCallback(null);
+        Settings.SetOnItemNumberIncrementedCallback(null);
 
         instance = null;
     }
 
     private void PrefixTextBoxOnTextChanged(object sender, EventArgs e)
     {
-        settings.itemNumberPrefix = prefixTextBox.Text;
+        Settings.itemNumberPrefix = prefixTextBox.Text;
     }
 
     private void CountNumericUpDownOnValueChanged(object sender, EventArgs e)
@@ -141,20 +143,20 @@ public partial class RenumberFabDuctForm : Form
 
         try
         {
-            settings.itemNumberCount =
+            Settings.itemNumberCount =
                 Convert.ToInt32(countNumericUpDown.Value);
         }
         catch (OverflowException)
         {
             countNumericUpDown.Value =
-                RenumberFabDuctSettings.DEFAULT_ITEM_NUMBER_COUNT;
+                RenumberFabDuctSettings.DefaultItemNumberCount;
         }
     }
 
     private void SetToNextHighestButtonOnClick(object sender, EventArgs e)
     {
         int highestNumber =
-            getHighestItemNumberCallback(settings.itemNumberPrefix);
+            getHighestItemNumberCallback(Settings.itemNumberPrefix);
 
         if (highestNumber >= countNumericUpDown.Minimum - 1
             && highestNumber < countNumericUpDown.Maximum)
@@ -164,7 +166,7 @@ public partial class RenumberFabDuctForm : Form
         else
         {
             countNumericUpDown.Value =
-                RenumberFabDuctSettings.DEFAULT_ITEM_NUMBER_COUNT;
+                RenumberFabDuctSettings.DefaultItemNumberCount;
         }
     }
 
@@ -172,12 +174,12 @@ public partial class RenumberFabDuctForm : Form
         object sender,
         EventArgs e)
     {
-        settings.PreventDuplicates = preventDuplicateCheckBox.Checked;
+        Settings.PreventDuplicates = preventDuplicateCheckBox.Checked;
     }
 
     private void LockCurrentCheckBoxOnCheckedChanged(object sender, EventArgs e)
     {
-        settings.LockCurrent = lockCurrentCheckBox.Checked;
+        Settings.LockCurrent = lockCurrentCheckBox.Checked;
 
         if (!lockCurrentCheckBox.Checked && lockAllCheckBox.Checked)
             lockAllCheckBox.Checked = false;
@@ -185,7 +187,7 @@ public partial class RenumberFabDuctForm : Form
 
     private void LockAllCheckBoxOnCheckedChanged(object sender, EventArgs e)
     {
-        settings.LockAllWithItemNumber = lockAllCheckBox.Checked;
+        Settings.LockAllWithItemNumber = lockAllCheckBox.Checked;
 
         if (lockAllCheckBox.Checked && !lockCurrentCheckBox.Checked)
             lockCurrentCheckBox.Checked = true;
