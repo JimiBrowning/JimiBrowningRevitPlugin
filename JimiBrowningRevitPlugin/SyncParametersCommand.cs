@@ -97,6 +97,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             new TaskDialog(Name)
             {
+                MainInstruction = "Change log",
                 MainContent = changeLog.ToString(),
                 CommonButtons = TaskDialogCommonButtons.Ok
             }.Show();
@@ -151,6 +152,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             new TaskDialog(Name)
             {
+                MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Fab duct " +
                 "parameters not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
@@ -222,6 +224,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             new TaskDialog(Name)
             {
+                MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Spigot sizes " +
                 "not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
@@ -287,6 +290,7 @@ internal class SyncParametersCommand : IExternalCommand
         {
             new TaskDialog(Name)
             {
+                MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Element levels " +
                 "not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
