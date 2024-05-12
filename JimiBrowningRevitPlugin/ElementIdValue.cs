@@ -1,8 +1,9 @@
 ﻿using Autodesk.Revit.DB;
+using System;
 
 namespace JimiBrowningRevitPlugin;
 
-internal readonly struct ElementIdValue
+internal readonly struct ElementIdValue : IComparable<ElementIdValue>
 {
 #if REVIT2024_OR_GREATER
     internal readonly long value;
@@ -37,5 +38,15 @@ internal readonly struct ElementIdValue
     public override bool Equals(object obj)
     {
         return obj is ElementIdValue other && value == other.value;
+    }
+
+    public override string ToString()
+    {
+        return value.ToString();
+    }
+
+    public int CompareTo(ElementIdValue other)
+    {
+        return value.CompareTo(other.value);
     }
 }
