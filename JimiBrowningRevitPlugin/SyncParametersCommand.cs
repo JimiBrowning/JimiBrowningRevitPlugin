@@ -112,7 +112,7 @@ internal class SyncParametersCommand : IExternalCommand
                         newChangeLog.Add(
                             fabDuctIdValue,
                             sharedParameter.Key,
-                            sharedParameter.Value.ToString("0.0"));
+                            FeetToMm(sharedParameter.Value).ToString("0.0"));
                 }
             }
         }
@@ -162,7 +162,7 @@ internal class SyncParametersCommand : IExternalCommand
                     sharedParameters.GetRequired(grille, "Remarks_Spigot");
 
                 string spigotSize = spigotSizeParameter != null
-                    ? FeetToMM(spigotSizeParameter.AsDouble()).ToString()
+                    ? FeetToMm(spigotSizeParameter.AsDouble()).ToString()
                     : "";
                 string remarksSpigot = remarksSpigotsParameter != null
                     ? remarksSpigotsParameter.AsString()
@@ -246,7 +246,7 @@ internal class SyncParametersCommand : IExternalCommand
                             newChangeLog.Add(
                                 elementIdValue,
                                 "RL Height",
-                                level.Elevation.ToString("0.0"));
+                                FeetToMm(level.Elevation).ToString("0.0"));
                         }
                     }
                 }
@@ -268,7 +268,7 @@ internal class SyncParametersCommand : IExternalCommand
         }
     }
 
-    private int FeetToMM(double feet)
+    private int FeetToMm(double feet)
     {
         double roundFactor = (feet >= 0.0) ? 0.5 : -0.5;
         return (int)(feet * 304.8 + roundFactor);
