@@ -19,6 +19,7 @@ internal class SyncParametersCommand : IExternalCommand
         + typeof(SyncParametersCommand).Name;
 
     private readonly SharedParameters sharedParameters = new();
+    private readonly ChangeLog changeLog = new();
 
     private Document document;
     private Elements elements;
@@ -36,10 +37,9 @@ internal class SyncParametersCommand : IExternalCommand
         using var transactionGroup = new TransactionGroup(document);
         transactionGroup.Start(Name);
 
-        var changeCount = new ChangeCount(0, 0);
-        changeCount += SyncFabDuctParameters();
-        changeCount += SyncGrilleSpigotSizes();
-        changeCount += SyncElementLevels();
+        SyncFabDuctParameters();
+        SyncGrilleSpigotSizes();
+        SyncElementLevels();
 
         transactionGroup.Assimilate();
 
@@ -70,19 +70,18 @@ internal class SyncParametersCommand : IExternalCommand
         new TaskDialog(Name)
         {
             MainContent = "Sync complete. " +
-            changeCount.parameterChangeCount.ToString() + " change(s) to " +
+            changeLog.ParameterCount.ToString() + " change(s) to " +
             "shared parameters of " +
-            changeCount.elementChangeCount.ToString() + " element(s).",
+            changeLog.ElementCount.ToString() + " element(s).",
             CommonButtons = TaskDialogCommonButtons.Ok
         }.Show();
 
         return Result.Succeeded;
     }
 
-    private ChangeCount SyncFabDuctParameters()
+    private void SyncFabDuctParameters()
     {
-        var changeCount = new ChangeCount(0, 0);
-
+        var newChangeLog = new ChangeLog();
         IEnumerable<FabricationPart> fabDucts = elements.GetAllFabDucts();
 
         using var transaction = new Transaction(document);
@@ -90,9 +89,9 @@ internal class SyncParametersCommand : IExternalCommand
 
         foreach (FabricationPart fabDuct in fabDucts)
         {
+            var fabDuctIdValue = new ElementIdValue(fabDuct.Id);
             var fabDuctParameters = new FabDuctSharedParameters();
             fabDuctParameters.Process(fabDuct);
-            bool hasChanges = false;
 
             foreach (
                 KeyValuePair<string, double> sharedParameter
@@ -110,20 +109,19 @@ internal class SyncParametersCommand : IExternalCommand
                         sharedParameter.Value))
                 {
                     if (sharedParameters.Set(parameter, sharedParameter.Value))
-                    {
-                        changeCount.parameterChangeCount++;
-
-                        if (!hasChanges)
-                        {
-                            changeCount.elementChangeCount++;
-                            hasChanges = true;
-                        }
-                    }
+                        newChangeLog.Add(
+                            fabDuctIdValue,
+                            sharedParameter.Key,
+                            sharedParameter.Value.ToString("0.0"));
                 }
             }
         }
 
-        if (transaction.Commit() != TransactionStatus.Committed)
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
         {
             new TaskDialog(Name)
             {
@@ -131,17 +129,12 @@ internal class SyncParametersCommand : IExternalCommand
                 "parameters not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
             }.Show();
-
-            return new ChangeCount(0, 0);
         }
-
-        return changeCount;
     }
 
-    private ChangeCount SyncGrilleSpigotSizes()
+    private void SyncGrilleSpigotSizes()
     {
-        var changeCount = new ChangeCount(0, 0);
-
+        var newChangeLog = new ChangeLog();
         IEnumerable<Element> grilles = elements.GetAllGrilles();
 
         using var transaction = new Transaction(document);
@@ -186,13 +179,20 @@ internal class SyncParametersCommand : IExternalCommand
                     spigotSizeOnScheduleParameter,
                     spigotSizeOnSchedule))
                 {
-                    changeCount.elementChangeCount++;
-                    changeCount.parameterChangeCount++;
+                    var grilleIdValue = new ElementIdValue(grille.Id);
+                    newChangeLog.Add(
+                        grilleIdValue,
+                        "Spigot Size on Schedule",
+                        spigotSizeOnSchedule);
                 }
             }
         }
 
-        if (transaction.Commit() != TransactionStatus.Committed)
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
         {
             new TaskDialog(Name)
             {
@@ -200,17 +200,12 @@ internal class SyncParametersCommand : IExternalCommand
                 "not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
             }.Show();
-
-            return new ChangeCount(0, 0);
         }
-
-        return changeCount;
     }
 
-    private ChangeCount SyncElementLevels()
+    private void SyncElementLevels()
     {
-        var changeCount = new ChangeCount(0, 0);
-
+        var newChangeLog = new ChangeLog();
         IEnumerable<Level> levels = elements.GetAllLevels();
 
         using var transaction = new Transaction(document);
@@ -223,8 +218,7 @@ internal class SyncParametersCommand : IExternalCommand
 
             foreach (Element element in elementsInLevel)
             {
-                bool hasChanges = false;
-
+                var elementIdValue = new ElementIdValue(element.Id);
                 Parameter rlNameParameter =
                     sharedParameters.Get(element, "RL Name");
                 Parameter rlHeightParameter =
@@ -235,13 +229,7 @@ internal class SyncParametersCommand : IExternalCommand
                 {
                     if (sharedParameters.Set(rlNameParameter, level.Name))
                     {
-                        changeCount.parameterChangeCount++;
-
-                        if (!hasChanges)
-                        {
-                            changeCount.elementChangeCount++;
-                            hasChanges = true;
-                        }
+                        newChangeLog.Add(elementIdValue, "RL Name", level.Name);
                     }
                 }
 
@@ -255,20 +243,21 @@ internal class SyncParametersCommand : IExternalCommand
                         if (sharedParameters
                             .Set(rlHeightParameter, level.Elevation))
                         {
-                            changeCount.parameterChangeCount++;
-
-                            if (!hasChanges)
-                            {
-                                changeCount.elementChangeCount++;
-                                hasChanges = true;
-                            }
+                            newChangeLog.Add(
+                                elementIdValue,
+                                "RL Height",
+                                level.Elevation.ToString("0.0"));
                         }
                     }
                 }
             }
         }
 
-        if (transaction.Commit() != TransactionStatus.Committed)
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
         {
             new TaskDialog(Name)
             {
@@ -276,11 +265,7 @@ internal class SyncParametersCommand : IExternalCommand
                 "not synced.",
                 CommonButtons = TaskDialogCommonButtons.Ok
             }.Show();
-
-            return new ChangeCount(0, 0);
         }
-
-        return changeCount;
     }
 
     private int FeetToMM(double feet)

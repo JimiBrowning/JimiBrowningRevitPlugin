@@ -9,7 +9,7 @@
     <Import_RootNamespace>JimiBrowningRevitPlugin</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ChangeCount.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeLog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SharedParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Elements.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphicOverrides.cs" />
