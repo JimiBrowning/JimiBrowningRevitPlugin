@@ -71,7 +71,7 @@ internal class SyncParametersCommand : IExternalCommand
             {
                 MainInstruction = "Warning!",
                 MainContent = stringBuilder.ToString(),
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
 
@@ -81,7 +81,7 @@ internal class SyncParametersCommand : IExternalCommand
             MainContent = changeLog.ParameterCount.ToString() + " change(s) " +
             "to shared parameters of " + changeLog.ElementCount.ToString() +
             " element(s).",
-            CommonButtons = TaskDialogCommonButtons.Ok
+            CommonButtons = TaskDialogCommonButtons.Close
         };
 
         if (changeLog.ElementCount > 0)
@@ -99,7 +99,7 @@ internal class SyncParametersCommand : IExternalCommand
             {
                 MainInstruction = "Change log",
                 MainContent = changeLog.ToString(),
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
 
@@ -155,7 +155,7 @@ internal class SyncParametersCommand : IExternalCommand
                 MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Fab duct " +
                 "parameters not synced.",
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
     }
@@ -227,7 +227,7 @@ internal class SyncParametersCommand : IExternalCommand
                 MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Spigot sizes " +
                 "not synced.",
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
     }
@@ -293,7 +293,7 @@ internal class SyncParametersCommand : IExternalCommand
                 MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Element levels " +
                 "not synced.",
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
     }

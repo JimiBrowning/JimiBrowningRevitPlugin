@@ -38,7 +38,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                     MainInstruction = "Warning!",
                     MainContent = "Failed to commit transaction. Element " +
                     "graphic settings not overridden.",
-                    CommonButtons = TaskDialogCommonButtons.Ok
+                    CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
             }
         }
@@ -75,7 +75,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                     itemNumber + "\" is already in use. Please " +
                     "choose a different item number or turn off duplicate " +
                     "checks.",
-                    CommonButtons = TaskDialogCommonButtons.Ok
+                    CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
 
                 if (previousItemNumber != "")
@@ -95,7 +95,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                     MainInstruction = "Warning!",
                     MainContent = "Failed to commit transaction. Item Number " +
                     "not set.",
-                    CommonButtons = TaskDialogCommonButtons.Ok
+                    CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
 
                 if (previousItemNumber != "")
@@ -115,7 +115,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                         MainInstruction = "Warning!",
                         MainContent = "Failed to commit transaction. Element " +
                         "graphic settings not overridden.",
-                        CommonButtons = TaskDialogCommonButtons.Ok
+                        CommonButtons = TaskDialogCommonButtons.Close
                     }.Show();
                 }
             }
@@ -133,7 +133,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                 MainInstruction = "Warning!",
                 MainContent = "Failed to commit transaction. Could not " +
                 "revert graphic overrides. Rolling back renumbering command.",
-                CommonButtons = TaskDialogCommonButtons.Ok
+                CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
 
             transactionGroup.RollBack();
