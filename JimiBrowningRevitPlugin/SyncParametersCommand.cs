@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace JimiBrowningRevitPlugin;
 
@@ -43,38 +44,63 @@ internal class SyncParametersCommand : IExternalCommand
 
         transactionGroup.Assimilate();
 
-        if (sharedParameters.HasMissingParameters())
+        if (sharedParameters.HasMissingParameters()
+            || sharedParameters.HasReadOnlyParameters())
         {
-            string missingParameters =
-                string.Join(", ", sharedParameters.GetMissingParameters());
+            var stringBuilder = new StringBuilder();
+
+            if (sharedParameters.HasMissingParameters())
+            {
+                string missingParameters =
+                    string.Join(", ", sharedParameters.GetMissingParameters());
+                stringBuilder.AppendLine(
+                    "Following shared parameter(s) are missing: " +
+                    missingParameters + ".");
+            }
+
+            if (sharedParameters.HasReadOnlyParameters())
+            {
+                string readOnlyParameters =
+                    string.Join(", ", sharedParameters.GetReadOnlyParameters());
+                stringBuilder.AppendLine(
+                    "Following shared parameter(s) are read-only: " +
+                    readOnlyParameters + ".");
+            }
+
             new TaskDialog(Name)
             {
-                MainContent = "Warning! Following shared parameter(s) are " +
-                "missing: " + missingParameters,
+                MainInstruction = "Warning!",
+                MainContent = stringBuilder.ToString(),
                 CommonButtons = TaskDialogCommonButtons.Ok
             }.Show();
         }
 
-        if (sharedParameters.HasReadOnlyParameters())
+        var syncCompleteDialog = new TaskDialog(Name)
         {
-            string readOnlyParameters =
-                string.Join(", ", sharedParameters.GetReadOnlyParameters());
-            new TaskDialog(Name)
-            {
-                MainContent = "Warning! Following shared parameter(s) are " +
-                "read-only: " + readOnlyParameters,
-                CommonButtons = TaskDialogCommonButtons.Ok
-            }.Show();
-        }
-
-        new TaskDialog(Name)
-        {
-            MainContent = "Sync complete. " +
-            changeLog.ParameterCount.ToString() + " change(s) to " +
-            "shared parameters of " +
-            changeLog.ElementCount.ToString() + " element(s).",
+            MainInstruction = "Sync complete",
+            MainContent = changeLog.ParameterCount.ToString() + " change(s) " +
+            "to shared parameters of " + changeLog.ElementCount.ToString() +
+            " element(s).",
             CommonButtons = TaskDialogCommonButtons.Ok
-        }.Show();
+        };
+
+        if (changeLog.ElementCount > 0)
+        {
+            syncCompleteDialog.AddCommandLink(
+                TaskDialogCommandLinkId.CommandLink1,
+                "View changes");
+        }
+
+        TaskDialogResult taskDialogResult = syncCompleteDialog.Show();
+
+        if (taskDialogResult == TaskDialogResult.CommandLink1)
+        {
+            new TaskDialog(Name)
+            {
+                MainContent = changeLog.ToString(),
+                CommonButtons = TaskDialogCommonButtons.Ok
+            }.Show();
+        }
 
         return Result.Succeeded;
     }
