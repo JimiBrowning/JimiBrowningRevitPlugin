@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using System;
 using System.Collections.Generic;
 
 namespace JimiBrowningRevitPlugin;
@@ -190,17 +191,31 @@ internal class FabDuctSharedParameters
         double totalLiningThickness = 2 * fabDuct.LiningThickness;
 
         double[] internalWidth = {
-            sharedParameters[SharedParamWidth1] - totalLiningThickness,
-            sharedParameters[SharedParamWidth2] - totalLiningThickness,
-            sharedParameters[SharedParamWidth3] - totalLiningThickness
+            Math.Max(
+                sharedParameters[SharedParamWidth1] - totalLiningThickness,
+                0),
+            Math.Max(
+                sharedParameters[SharedParamWidth2] - totalLiningThickness,
+                0),
+            Math.Max(
+                sharedParameters[SharedParamWidth3] - totalLiningThickness,
+                0)
         };
         double[] internalHeight = {
-            sharedParameters[SharedParamHeight1] - totalLiningThickness,
-            sharedParameters[SharedParamHeight2] - totalLiningThickness,
-            sharedParameters[SharedParamHeight3] - totalLiningThickness
+            Math.Max(
+                sharedParameters[SharedParamHeight1] - totalLiningThickness,
+                0),
+            Math.Max(
+                sharedParameters[SharedParamHeight2] - totalLiningThickness,
+                0),
+            Math.Max(
+                sharedParameters[SharedParamHeight3] - totalLiningThickness,
+                0)
         };
         double internalDiameter =
-            sharedParameters[SharedParamDiameter1] - totalLiningThickness;
+            Math.Max(
+                sharedParameters[SharedParamDiameter1] - totalLiningThickness,
+                0);
 
         double smallestArea = double.MaxValue;
         int smallestAreaIndex = 0;
