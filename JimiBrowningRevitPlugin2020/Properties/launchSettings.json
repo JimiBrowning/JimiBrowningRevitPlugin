@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "JimiBrowningRevitPlugin2020": {
+      "commandName": "Project"
+    },
+    "Revit 2020": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2020\\Revit.exe"
+    }
+  }
+}

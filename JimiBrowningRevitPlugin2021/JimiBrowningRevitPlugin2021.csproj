@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2021</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2021</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JimiBrowningRevitPluginCore\JimiBrowningRevitPluginCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="RevitAPI">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="JimiBrowningRevitPlugin.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2021.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2021\&quot;&#xD;&#xA;Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2021.addin&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2021\&quot;&#xD;&#xA;if $(ConfigurationName) == Release (&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2021.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2021\&quot;&#xD;&#xA;  Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2021.addin&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2021\&quot;&#xD;&#xA;)" />
+  </Target>
+
+  <Import Project="..\JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems" Label="Shared" />
+
+</Project>

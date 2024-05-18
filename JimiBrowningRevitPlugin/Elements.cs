@@ -64,7 +64,8 @@ internal class Elements
         var itemNumberValueProvider = new ParameterValueProvider(
             new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
         var filterStringGreater = new FilterStringGreater();
-        var hasItemNumberFilterRule = new FilterStringRule(
+        var hasItemNumberFilterRule =
+            RevitCompat.CreateFilterStringRule(
                 itemNumberValueProvider,
                 filterStringGreater,
                 "");
@@ -93,7 +94,11 @@ internal class Elements
         var valueProvider = new ParameterValueProvider(
             new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
         var evaluator = new FilterStringBeginsWith();
-        var filterRule = new FilterStringRule(valueProvider, evaluator, prefix);
+        var filterRule =
+            RevitCompat.CreateFilterStringRule(
+                valueProvider,
+                evaluator,
+                prefix);
         var prefixFilter = new ElementParameterFilter(filterRule);
 
         var combinedFilter = new LogicalAndFilter(fabDuctFilter, prefixFilter);

@@ -2,3 +2,6 @@
 
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = silent
+
+# CA1864: Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
+dotnet_diagnostic.CA1864.severity = none

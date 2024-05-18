@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
 	<LangVersion>11.0</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);REVIT2022;REVIT2022_OR_GREATER</DefineConstants>
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2022_OR_GREATER;REVIT2022</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants);REVIT2022;REVIT2022_OR_GREATER</DefineConstants>
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2022_OR_GREATER;REVIT2022</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

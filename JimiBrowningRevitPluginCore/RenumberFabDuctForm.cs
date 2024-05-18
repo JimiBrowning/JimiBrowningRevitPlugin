@@ -77,7 +77,6 @@ public partial class RenumberFabDuctForm : Form
             instance.lockCurrentCheckBox.Enabled = true;
             instance.lockAllCheckBox.Enabled = true;
             instance.startRenumberingButton.Enabled = true;
-            instance.closeButton.Enabled = true;
         }
     }
 
@@ -95,7 +94,6 @@ public partial class RenumberFabDuctForm : Form
             instance.lockCurrentCheckBox.Enabled = false;
             instance.lockAllCheckBox.Enabled = false;
             instance.startRenumberingButton.Enabled = false;
-            instance.closeButton.Enabled = false;
         }
     }
 
@@ -196,9 +194,5 @@ public partial class RenumberFabDuctForm : Form
     private void StartRenumberingButtonOnClick(object sender, EventArgs e)
     {
         startRenumberingCallback();
-    }
-    private void CloseButtonOnClick(object sender, EventArgs e)
-    {
-        Close();
     }
 }

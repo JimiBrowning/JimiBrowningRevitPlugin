@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ChangeLog.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RevitCompat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SharedParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Elements.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphicOverrides.cs" />
