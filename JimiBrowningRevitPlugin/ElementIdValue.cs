@@ -35,7 +35,7 @@ internal readonly struct ElementIdValue : IComparable<ElementIdValue>
         return value.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is ElementIdValue other && value == other.value;
     }

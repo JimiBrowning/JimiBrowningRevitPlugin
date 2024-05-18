@@ -29,7 +29,7 @@ internal class ChangeLog
     }
 
     private readonly Dictionary<ElementIdValue, Dictionary<string, string>> log
-        = new();
+        = [];
 
     internal void Add(ChangeLog changeLog)
     {
@@ -54,18 +54,18 @@ internal class ChangeLog
         string parameterName,
         string value)
     {
-        if (!log.ContainsKey(elementId))
+        if (log.TryGetValue(elementId, out Dictionary<string, string>? element))
         {
-            var parameters = new Dictionary<string, string>
-            { { parameterName, value } };
-            log.Add(elementId, parameters);
+            if (!element.ContainsKey(parameterName))
+                element.Add(parameterName, value);
+            else
+                element[parameterName] = value;
         }
         else
         {
-            if (!log[elementId].ContainsKey(parameterName))
-                log[elementId].Add(parameterName, value);
-            else
-                log[elementId][parameterName] = value;
+            var parameters =
+                new Dictionary<string, string> { { parameterName, value } };
+            log.Add(elementId, parameters);
         }
     }
 

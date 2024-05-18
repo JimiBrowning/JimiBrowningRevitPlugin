@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
-		<LangVersion>11.0</LangVersion>
-		<UseWindowsForms>true</UseWindowsForms>
-		<PlatformTarget>x64</PlatformTarget>
-	</PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\RenameIcon.png" />
@@ -21,26 +22,26 @@
     <EmbeddedResource Include="Resources\RenameIcon32.png" />
     <EmbeddedResource Include="Resources\SyncIcon16.png" />
     <EmbeddedResource Include="Resources\SyncIcon32.png" />
-  </ItemGroup>														
+  </ItemGroup>
 
-	<ItemGroup>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Resources.resx</DependentUpon>
-		</Compile>
-		<Compile Update="RenumberFabDuctForm.cs" />
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="RenumberFabDuctForm.cs" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Update="Properties\Resources.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2020\&quot;&#xD;&#xA;Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2021\&quot;&#xD;&#xA;Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2022\&quot;&#xD;&#xA;Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2023\&quot;&#xD;&#xA;Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2024\&quot;&#xD;&#xA;Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\&quot;&#xD;&#xA;if $(ConfigurationName) == Release (&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2020\&quot;&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2021\&quot;&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2022\&quot;&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2023\&quot;&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2024\&quot;&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPluginCore.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2025\&quot;&#xD;&#xA;)" />
-	</Target>
+  </Target>
 
 </Project>

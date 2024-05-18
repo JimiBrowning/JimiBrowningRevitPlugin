@@ -18,19 +18,21 @@ internal class Elements
         document = uiDocument.Document;
     }
 
-    internal FabricationPart SelectFabDuct(
+    internal FabricationPart? SelectFabDuct(
         bool lockAllWithItemNumber,
         HashSet<ElementIdValue> lockElementIds)
     {
         try
         {
-            var fabDuctSelectionFilter = new FabDuctSelectionFilter(
-                lockAllWithItemNumber,
-                lockElementIds);
-            Reference reference = uiDocument.Selection.PickObject(
-                ObjectType.Element,
-                fabDuctSelectionFilter,
-                "Select a fabrication duct. Press ESC key to cancel.");
+            var fabDuctSelectionFilter =
+                new FabDuctSelectionFilter(
+                    lockAllWithItemNumber,
+                    lockElementIds);
+            Reference reference =
+                uiDocument.Selection.PickObject(
+                    ObjectType.Element,
+                    fabDuctSelectionFilter,
+                    "Select a fabrication duct. Press ESC key to cancel.");
 
             return uiDocument.Document.GetElement(reference) as FabricationPart;
         }
@@ -43,8 +45,8 @@ internal class Elements
     internal IEnumerable<FabricationPart> GetAllFabDucts()
     {
         var collector = new FilteredElementCollector(document);
-        var filter = new ElementCategoryFilter(
-            BuiltInCategory.OST_FabricationDuctwork);
+        var filter =
+            new ElementCategoryFilter(BuiltInCategory.OST_FabricationDuctwork);
         IEnumerable<FabricationPart> allFabDucts =
             collector
             .WherePasses(filter)
@@ -58,11 +60,12 @@ internal class Elements
     {
         var collector = new FilteredElementCollector(document);
 
-        var fabDuctFilter = new ElementCategoryFilter(
-            BuiltInCategory.OST_FabricationDuctwork);
+        var fabDuctFilter =
+            new ElementCategoryFilter(BuiltInCategory.OST_FabricationDuctwork);
 
-        var itemNumberValueProvider = new ParameterValueProvider(
-            new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
+        var itemNumberValueProvider =
+            new ParameterValueProvider(
+                new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
         var filterStringGreater = new FilterStringGreater();
         var hasItemNumberFilterRule =
             RevitCompat.CreateFilterStringRule(
@@ -75,7 +78,8 @@ internal class Elements
         var combinedFilter =
             new LogicalAndFilter(fabDuctFilter, hasItemNumberFilter);
 
-        IEnumerable<FabricationPart> fabDucts = collector
+        IEnumerable<FabricationPart> fabDucts =
+            collector
             .WherePasses(combinedFilter)
             .WhereElementIsNotElementType()
             .Cast<FabricationPart>();
@@ -88,11 +92,12 @@ internal class Elements
     {
         var collector = new FilteredElementCollector(document);
 
-        var fabDuctFilter = new ElementCategoryFilter(
-            BuiltInCategory.OST_FabricationDuctwork);
+        var fabDuctFilter =
+            new ElementCategoryFilter(BuiltInCategory.OST_FabricationDuctwork);
 
-        var valueProvider = new ParameterValueProvider(
-            new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
+        var valueProvider =
+            new ParameterValueProvider(
+                new ElementId(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER));
         var evaluator = new FilterStringBeginsWith();
         var filterRule =
             RevitCompat.CreateFilterStringRule(
@@ -103,7 +108,8 @@ internal class Elements
 
         var combinedFilter = new LogicalAndFilter(fabDuctFilter, prefixFilter);
 
-        IEnumerable<FabricationPart> fabDucts = collector
+        IEnumerable<FabricationPart> fabDucts =
+            collector
             .WherePasses(combinedFilter)
             .WhereElementIsNotElementType()
             .Cast<FabricationPart>();
@@ -113,8 +119,9 @@ internal class Elements
 
     internal string GetFabDuctItemNumber(FabricationPart fabDuct)
     {
-        Parameter itemNumberParameter = fabDuct.get_Parameter(
-            BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
+        Parameter itemNumberParameter =
+            fabDuct.get_Parameter(
+                BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
         return itemNumberParameter.AsString();
     }
 
@@ -143,7 +150,8 @@ internal class Elements
 
         foreach (FabricationPart fabDuct in fabDucts)
         {
-            string itemNumberString = fabDuct
+            string itemNumberString =
+                fabDuct
                 .get_Parameter(BuiltInParameter.FABRICATION_PART_ITEM_NUMBER)
                 .AsString()
                 .Substring(prefix.Length);
@@ -151,16 +159,15 @@ internal class Elements
             if (itemNumberString.Length == 0 || itemNumberString[0] == '0')
                 continue;
 
-            bool isItemNumberStringInt = int.TryParse(
-                itemNumberString,
-                NumberStyles.None,
-                CultureInfo.InvariantCulture,
-                out int itemNumber);
+            bool isItemNumberStringInt =
+                int.TryParse(
+                    itemNumberString,
+                    NumberStyles.None,
+                    CultureInfo.InvariantCulture,
+                    out int itemNumber);
 
             if (isItemNumberStringInt && itemNumber > highestNumber)
-            {
                 highestNumber = itemNumber;
-            }
         }
 
         return highestNumber;
@@ -173,8 +180,9 @@ internal class Elements
         using var transaction = new Transaction(document);
         transaction.Start("Set fab duct Item Number");
 
-        Parameter itemNumberParameter = fabDuct.get_Parameter(
-            BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
+        Parameter itemNumberParameter =
+            fabDuct.get_Parameter(
+                BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
         itemNumberParameter.Set(itemNumber);
 
         return transaction.Commit() == TransactionStatus.Committed;
@@ -183,8 +191,8 @@ internal class Elements
     internal IEnumerable<Element> GetAllGrilles()
     {
         var collector = new FilteredElementCollector(document);
-        var filter = new ElementCategoryFilter(
-            BuiltInCategory.OST_DuctTerminal);
+        var filter =
+            new ElementCategoryFilter(BuiltInCategory.OST_DuctTerminal);
         IEnumerable<Element> grilles =
             collector
             .WherePasses(filter)

@@ -9,7 +9,7 @@ public partial class RenumberFabDuctForm : Form
     private static readonly RenumberFabDuctSettings Settings =
         RenumberFabDuctSettings.Instance;
 
-    private static RenumberFabDuctForm instance;
+    private static RenumberFabDuctForm? instance;
 
     private readonly GetHighestItemNumberCallback getHighestItemNumberCallback;
     private readonly StartRenumberingCallback startRenumberingCallback;
@@ -40,9 +40,10 @@ public partial class RenumberFabDuctForm : Form
             if (instance != null)
                 return;
 
-            instance = new RenumberFabDuctForm(
-                getHighestItemNumberCallback,
-                startRenumberingCallback);
+            instance =
+                new RenumberFabDuctForm(
+                    getHighestItemNumberCallback,
+                    startRenumberingCallback);
             instance.Show();
         }
     }

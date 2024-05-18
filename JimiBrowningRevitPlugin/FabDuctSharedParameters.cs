@@ -175,13 +175,11 @@ internal class FabDuctSharedParameters
         {
             if (DimensionToSharedParamMap.TryGetValue(
                 dimension.Name,
-                out List<string> sharedParameters))
+                out List<string>? sharedParameters))
             {
                 double value = fabDuct.GetDimensionValue(dimension);
                 foreach (string sharedParameter in sharedParameters)
-                {
                     Set(sharedParameter, value);
-                }
             }
         }
     }
@@ -190,7 +188,7 @@ internal class FabDuctSharedParameters
     {
         double totalLiningThickness = 2 * fabDuct.LiningThickness;
 
-        double[] internalWidth = {
+        double[] internalWidth = [
             Math.Max(
                 sharedParameters[SharedParamWidth1] - totalLiningThickness,
                 0),
@@ -200,8 +198,8 @@ internal class FabDuctSharedParameters
             Math.Max(
                 sharedParameters[SharedParamWidth3] - totalLiningThickness,
                 0)
-        };
-        double[] internalHeight = {
+        ];
+        double[] internalHeight = [
             Math.Max(
                 sharedParameters[SharedParamHeight1] - totalLiningThickness,
                 0),
@@ -211,7 +209,7 @@ internal class FabDuctSharedParameters
             Math.Max(
                 sharedParameters[SharedParamHeight3] - totalLiningThickness,
                 0)
-        };
+        ];
         double internalDiameter =
             Math.Max(
                 sharedParameters[SharedParamDiameter1] - totalLiningThickness,

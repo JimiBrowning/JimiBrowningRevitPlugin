@@ -20,7 +20,7 @@ internal class RenumberFabDuctCommand : IExternalCommand
     private readonly ExternalEvent renumberFabDuctEvent =
         ExternalEvent.Create(new RenumberFabDuctEventHandler());
 
-    private UIApplication uiApplication;
+    private UIApplication? uiApplication;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
@@ -41,7 +41,7 @@ internal class RenumberFabDuctCommand : IExternalCommand
 
     private int GetHighestItemNumberCallback(string itemNumberPrefix)
     {
-        var elements = new Elements(uiApplication.ActiveUIDocument);
+        var elements = new Elements(uiApplication!.ActiveUIDocument);
         int highestNumber =
             elements.GetHighestItemNumberWithPrefix(itemNumberPrefix);
 

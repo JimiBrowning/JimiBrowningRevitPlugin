@@ -22,8 +22,8 @@ internal class SyncParametersCommand : IExternalCommand
     private readonly SharedParameters sharedParameters = new();
     private readonly ChangeLog changeLog = new();
 
-    private Document document;
-    private Elements elements;
+    private Document? document;
+    private Elements? elements;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
@@ -78,9 +78,10 @@ internal class SyncParametersCommand : IExternalCommand
         var syncCompleteDialog = new TaskDialog(Name)
         {
             MainInstruction = "Sync complete",
-            MainContent = changeLog.ParameterCount.ToString() + " change(s) " +
-            "to shared parameters of " + changeLog.ElementCount.ToString() +
-            " element(s).",
+            MainContent =
+                changeLog.ParameterCount.ToString() + " change(s) to shared " +
+                "parameters of " + changeLog.ElementCount.ToString() +
+                " element(s).",
             CommonButtons = TaskDialogCommonButtons.Close
         };
 
@@ -109,7 +110,7 @@ internal class SyncParametersCommand : IExternalCommand
     private void SyncFabDuctParameters()
     {
         var newChangeLog = new ChangeLog();
-        IEnumerable<FabricationPart> fabDucts = elements.GetAllFabDucts();
+        IEnumerable<FabricationPart> fabDucts = elements!.GetAllFabDucts();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync fab duct parameters");
@@ -124,7 +125,7 @@ internal class SyncParametersCommand : IExternalCommand
                 KeyValuePair<string, double> sharedParameter
                 in fabDuctParameters.SharedParameters)
             {
-                Parameter parameter =
+                Parameter? parameter =
                     sharedParameters.GetRequired(fabDuct, sharedParameter.Key);
 
                 if (parameter == null)
@@ -153,8 +154,9 @@ internal class SyncParametersCommand : IExternalCommand
             new TaskDialog(Name)
             {
                 MainInstruction = "Warning!",
-                MainContent = "Failed to commit transaction. Fab duct " +
-                "parameters not synced.",
+                MainContent =
+                    "Failed to commit transaction. Fab duct parameters not " +
+                    "synced.",
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
@@ -163,19 +165,19 @@ internal class SyncParametersCommand : IExternalCommand
     private void SyncGrilleSpigotSizes()
     {
         var newChangeLog = new ChangeLog();
-        IEnumerable<Element> grilles = elements.GetAllGrilles();
+        IEnumerable<Element> grilles = elements!.GetAllGrilles();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync grilles spigot sizes");
 
         foreach (Element grille in grilles)
         {
-            Parameter spigotSizeOnScheduleParameter =
+            Parameter? spigotSizeOnScheduleParameter =
                 sharedParameters.Get(grille, "Spigot Size on Schedule");
             if (spigotSizeOnScheduleParameter == null)
                 continue;
 
-            Parameter cuBoxParameter =
+            Parameter? cuBoxParameter =
                 sharedParameters.Get(grille, "Cu_Box");
 
             bool cuBox =
@@ -184,15 +186,17 @@ internal class SyncParametersCommand : IExternalCommand
 
             if (cuBox)
             {
-                Parameter spigotSizeParameter =
+                Parameter? spigotSizeParameter =
                     sharedParameters.GetRequired(grille, "Spigot_Size");
-                Parameter remarksSpigotsParameter =
+                Parameter? remarksSpigotsParameter =
                     sharedParameters.GetRequired(grille, "Remarks_Spigot");
 
-                string spigotSize = spigotSizeParameter != null
+                string spigotSize =
+                    spigotSizeParameter != null
                     ? FeetToMm(spigotSizeParameter.AsDouble()).ToString()
                     : "";
-                string remarksSpigot = remarksSpigotsParameter != null
+                string remarksSpigot =
+                    remarksSpigotsParameter != null
                     ? remarksSpigotsParameter.AsString()
                     : "";
 
@@ -225,8 +229,8 @@ internal class SyncParametersCommand : IExternalCommand
             new TaskDialog(Name)
             {
                 MainInstruction = "Warning!",
-                MainContent = "Failed to commit transaction. Spigot sizes " +
-                "not synced.",
+                MainContent =
+                    "Failed to commit transaction. Spigot sizes not synced.",
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
@@ -235,7 +239,7 @@ internal class SyncParametersCommand : IExternalCommand
     private void SyncElementLevels()
     {
         var newChangeLog = new ChangeLog();
-        IEnumerable<Level> levels = elements.GetAllLevels();
+        IEnumerable<Level> levels = elements!.GetAllLevels();
 
         using var transaction = new Transaction(document);
         transaction.Start("Sync element levels");
@@ -248,18 +252,16 @@ internal class SyncParametersCommand : IExternalCommand
             foreach (Element element in elementsInLevel)
             {
                 var elementIdValue = new ElementIdValue(element.Id);
-                Parameter rlNameParameter =
+                Parameter? rlNameParameter =
                     sharedParameters.Get(element, "RL Name");
-                Parameter rlHeightParameter =
+                Parameter? rlHeightParameter =
                     sharedParameters.Get(element, "RL Height");
 
                 if (rlNameParameter != null &&
                     rlNameParameter.AsString() != level.Name)
                 {
                     if (sharedParameters.Set(rlNameParameter, level.Name))
-                    {
                         newChangeLog.Add(elementIdValue, "RL Name", level.Name);
-                    }
                 }
 
                 if (rlHeightParameter != null)
@@ -269,8 +271,9 @@ internal class SyncParametersCommand : IExternalCommand
                             rlHeightParameter.AsDouble(),
                             level.Elevation))
                     {
-                        if (sharedParameters
-                            .Set(rlHeightParameter, level.Elevation))
+                        if (sharedParameters.Set(
+                            rlHeightParameter,
+                            level.Elevation))
                         {
                             newChangeLog.Add(
                                 elementIdValue,
@@ -291,8 +294,8 @@ internal class SyncParametersCommand : IExternalCommand
             new TaskDialog(Name)
             {
                 MainInstruction = "Warning!",
-                MainContent = "Failed to commit transaction. Element levels " +
-                "not synced.",
+                MainContent =
+                    "Failed to commit transaction. Element levels not synced.",
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }

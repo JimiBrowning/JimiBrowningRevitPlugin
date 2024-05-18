@@ -13,8 +13,8 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
     private readonly RenumberFabDuctSettings settings =
         RenumberFabDuctSettings.Instance;
 
-    private Elements elements;
-    private GraphicOverrides graphicsOverrides;
+    private Elements? elements;
+    private GraphicOverrides? graphicsOverrides;
 
     public void Execute(UIApplication uiApplication)
     {
@@ -36,8 +36,9 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                 new TaskDialog(Name)
                 {
                     MainInstruction = "Warning!",
-                    MainContent = "Failed to commit transaction. Element " +
-                    "graphic settings not overridden.",
+                    MainContent =
+                        "Failed to commit transaction. Element graphic " +
+                        "settings not overridden.",
                     CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
             }
@@ -51,9 +52,10 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
         {
             HashSet<ElementIdValue> overridenFabDuctIds =
                 graphicsOverrides.GetOverridenFabDuctIds();
-            FabricationPart fabDuct = elements.SelectFabDuct(
-                settings.LockAllWithItemNumber,
-                overridenFabDuctIds);
+            FabricationPart? fabDuct =
+                elements.SelectFabDuct(
+                    settings.LockAllWithItemNumber,
+                    overridenFabDuctIds);
 
             if (fabDuct == null)
                 break;
@@ -71,10 +73,10 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                 new TaskDialog(Name)
                 {
                     MainInstruction = "Duplicate item number",
-                    MainContent = "Item number \"" +
-                    itemNumber + "\" is already in use. Please " +
-                    "choose a different item number or turn off duplicate " +
-                    "checks.",
+                    MainContent =
+                        "Item number \"" + itemNumber + "\" is already in " +
+                        "use. Please choose a different item number or turn " +
+                        "off duplicate checks.",
                     CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
 
@@ -93,8 +95,8 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                 new TaskDialog(Name)
                 {
                     MainInstruction = "Warning!",
-                    MainContent = "Failed to commit transaction. Item Number " +
-                    "not set.",
+                    MainContent =
+                        "Failed to commit transaction. Item Number not set.",
                     CommonButtons = TaskDialogCommonButtons.Close
                 }.Show();
 
@@ -113,14 +115,14 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
                     new TaskDialog(Name)
                     {
                         MainInstruction = "Warning!",
-                        MainContent = "Failed to commit transaction. Element " +
-                        "graphic settings not overridden.",
+                        MainContent =
+                            "Failed to commit transaction. Element graphic " +
+                            "settings not overridden.",
                         CommonButtons = TaskDialogCommonButtons.Close
                     }.Show();
                 }
             }
         }
-
 
         if (graphicsOverrides.Revert())
         {
@@ -131,8 +133,9 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
             new TaskDialog(Name)
             {
                 MainInstruction = "Warning!",
-                MainContent = "Failed to commit transaction. Could not " +
-                "revert graphic overrides. Rolling back renumbering command.",
+                MainContent =
+                    "Failed to commit transaction. Could not revert graphic " +
+                    "overrides. Rolling back renumbering command.",
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
 
@@ -144,7 +147,7 @@ internal class RenumberFabDuctEventHandler : IExternalEventHandler
 
     public string GetName()
     {
-        return "Renumber fab duct";
+        return Name;
     }
 
     internal delegate void RenumberFabDuctCallback();

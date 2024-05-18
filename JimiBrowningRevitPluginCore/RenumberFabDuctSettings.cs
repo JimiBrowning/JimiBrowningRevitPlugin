@@ -29,7 +29,7 @@ public class RenumberFabDuctSettings
 
     private static readonly object LockObject = new();
 
-    private static RenumberFabDuctSettings instance = null;
+    private static RenumberFabDuctSettings? instance = null;
 
     public bool PreventDuplicates { get; internal set; } =
         DefaultPreventDuplicates;
@@ -45,7 +45,7 @@ public class RenumberFabDuctSettings
     internal string itemNumberPrefix = DefaultItemNumberPrefix;
     internal int itemNumberCount = DefaultItemNumberCount;
 
-    private OnItemNumberIncrementedCallback
+    private OnItemNumberIncrementedCallback?
         onItemNumberIncrementedCallback = null;
 
     public void IncrementItemNumber()
@@ -61,7 +61,7 @@ public class RenumberFabDuctSettings
     internal delegate void OnItemNumberIncrementedCallback(int itemNumberCount);
 
     internal void SetOnItemNumberIncrementedCallback(
-        OnItemNumberIncrementedCallback onItemNumberIncrementedCallback)
+        OnItemNumberIncrementedCallback? onItemNumberIncrementedCallback)
     {
         this.onItemNumberIncrementedCallback = onItemNumberIncrementedCallback;
     }

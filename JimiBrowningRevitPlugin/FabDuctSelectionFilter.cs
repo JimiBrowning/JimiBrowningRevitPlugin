@@ -22,26 +22,21 @@ internal class FabDuctSelectionFilter : ISelectionFilter
 
     public bool AllowElement(Element element)
     {
-        if (element.Category == null
-            || element.Category.Id != FabDuctCategoryId)
-        {
+        if (element.Category?.Id != FabDuctCategoryId)
             return false;
-        }
 
         if (lockAllWithItemNumber)
         {
-            Parameter itemNumberParameter = element.get_Parameter(
-                BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
+            Parameter itemNumberParameter =
+                element.get_Parameter(
+                    BuiltInParameter.FABRICATION_PART_ITEM_NUMBER);
 
             if (itemNumberParameter.AsString() != "")
                 return false;
         }
 
-        if (lockElementIds != null
-            && lockElementIds.Contains(new ElementIdValue(element.Id)))
-        {
+        if (lockElementIds?.Contains(new ElementIdValue(element.Id)) == true)
             return false;
-        }
 
         return true;
     }

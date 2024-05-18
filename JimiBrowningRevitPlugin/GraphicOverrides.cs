@@ -10,7 +10,7 @@ internal class GraphicOverrides
     private readonly View view;
     private readonly OverrideGraphicSettings overrideGraphicSettings = new();
     private readonly Dictionary<ElementIdValue, OverrideGraphicSettings>
-        originalOverrideGraphicSettingsList = new();
+        originalOverrideGraphicSettingsList = [];
 
     internal GraphicOverrides(Document document)
     {
@@ -49,7 +49,7 @@ internal class GraphicOverrides
         if (transaction.Commit() != TransactionStatus.Committed)
             return false;
 
-        this.originalOverrideGraphicSettingsList.Add(
+        originalOverrideGraphicSettingsList.Add(
             fabDuctId,
             originalOverrideGraphicSettings);
 
@@ -85,8 +85,8 @@ internal class GraphicOverrides
             if (itemNumberParameter.AsString() == "")
                 continue;
 
-            OverrideGraphicSettings originalOverrideGraphicSettings
-                    = view.GetElementOverrides(fabDuct.Id);
+            OverrideGraphicSettings originalOverrideGraphicSettings =
+                view.GetElementOverrides(fabDuct.Id);
             view.SetElementOverrides(fabDuct.Id, overrideGraphicSettings);
             tempOriginalOverrideGraphicSettingsList.Add(
                 fabDuctId,

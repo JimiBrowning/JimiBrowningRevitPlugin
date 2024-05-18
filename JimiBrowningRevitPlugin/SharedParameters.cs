@@ -6,12 +6,12 @@ namespace JimiBrowningRevitPlugin;
 
 internal class SharedParameters
 {
-    private readonly List<string> missingParameters = new();
-    private readonly List<string> readOnlyParameters = new();
+    private readonly List<string> missingParameters = [];
+    private readonly List<string> readOnlyParameters = [];
 
-    internal Parameter GetRequired(Element element, string parameterName)
+    internal Parameter? GetRequired(Element element, string parameterName)
     {
-        Parameter parameter = Get(element, parameterName);
+        Parameter? parameter = Get(element, parameterName);
 
         if (parameter == null)
         {
@@ -24,7 +24,7 @@ internal class SharedParameters
         return parameter;
     }
 
-    internal Parameter Get(Element element, string parameterName)
+    internal Parameter? Get(Element element, string parameterName)
     {
         return element.LookupParameter(parameterName);
     }
@@ -34,9 +34,7 @@ internal class SharedParameters
         if (IsReadonly(parameter))
             return false;
 
-        parameter.Set(value);
-
-        return true;
+        return parameter.Set(value);
     }
 
     internal bool Set(Parameter parameter, double value)
@@ -44,9 +42,7 @@ internal class SharedParameters
         if (IsReadonly(parameter))
             return false;
 
-        parameter.Set(value);
-
-        return true;
+        return parameter.Set(value);
     }
 
     private bool IsReadonly(Parameter parameter)
