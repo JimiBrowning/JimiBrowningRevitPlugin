@@ -8,7 +8,7 @@ internal class ChangeLog
 {
     internal int ElementCount
     {
-        get { return log.Count; }
+        get => log.Count;
     }
 
     internal int ParameterCount

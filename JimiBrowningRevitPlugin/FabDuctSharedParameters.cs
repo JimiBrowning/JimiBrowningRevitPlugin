@@ -63,7 +63,7 @@ internal class FabDuctSharedParameters
 
     internal IReadOnlyDictionary<string, double> SharedParameters
     {
-        get { return sharedParameters; }
+        get => sharedParameters;
     }
 
     private readonly Dictionary<string, double> sharedParameters;

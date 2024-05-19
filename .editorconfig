@@ -5,3 +5,6 @@ dotnet_diagnostic.IDE1006.severity = silent
 
 # CA1864: Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
 dotnet_diagnostic.CA1864.severity = none
+
+# IDE0057: Use range operator
+dotnet_diagnostic.IDE0057.severity = none

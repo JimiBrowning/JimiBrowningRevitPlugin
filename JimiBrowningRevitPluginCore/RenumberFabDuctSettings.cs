@@ -39,7 +39,7 @@ public class RenumberFabDuctSettings
         DefaultLockAllWithItemNumber;
     public string ItemNumber
     {
-        get { return itemNumberPrefix + itemNumberCount.ToString(); }
+        get => itemNumberPrefix + itemNumberCount.ToString();
     }
 
     internal string itemNumberPrefix = DefaultItemNumberPrefix;

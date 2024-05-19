@@ -24,7 +24,9 @@ internal class SharedParameters
         return parameter;
     }
 
+#pragma warning disable CA1822
     internal Parameter? Get(Element element, string parameterName)
+#pragma warning restore CA1822
     {
         return element.LookupParameter(parameterName);
     }
