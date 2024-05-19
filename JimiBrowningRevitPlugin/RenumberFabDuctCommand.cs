@@ -11,6 +11,8 @@ internal class RenumberFabDuctCommand : IExternalCommand
     internal const string ToolTip =
         "Renumbers fabrication duct Item Number with prefix and " +
         "auto-incrementing number.";
+    internal const string Icon16 = "RenameIcon16.png";
+    internal const string Icon32 = "RenameIcon32.png";
 
     internal static readonly string ClassName =
         typeof(RenumberFabDuctCommand).Namespace

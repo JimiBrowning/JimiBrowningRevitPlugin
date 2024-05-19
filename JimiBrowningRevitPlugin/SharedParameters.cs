@@ -13,20 +13,13 @@ internal class SharedParameters
     {
         Parameter? parameter = Get(element, parameterName);
 
-        if (parameter == null)
-        {
-            if (!missingParameters.Contains(parameterName))
-                missingParameters.Add(parameterName);
-
-            return null;
-        }
+        if (parameter == null && !missingParameters.Contains(parameterName))
+            missingParameters.Add(parameterName);
 
         return parameter;
     }
 
-#pragma warning disable CA1822
     internal Parameter? Get(Element element, string parameterName)
-#pragma warning restore CA1822
     {
         return element.LookupParameter(parameterName);
     }

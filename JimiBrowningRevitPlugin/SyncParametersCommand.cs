@@ -1,7 +1,6 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,6 +12,11 @@ internal class SyncParametersCommand : IExternalCommand
     internal const string Name = "Sync Parameters";
     internal const string ToolTip =
         "Syncs inaccessible parameters to shared parameters.";
+    internal const string Icon16 = "SyncIcon16.png";
+    internal const string Icon32 = "SyncIcon32.png";
+
+    private const string SharedParamRlName = "RL Name";
+    private const string SharedParamRlHeight = "RL Height";
 
     internal static readonly string ClassName =
         typeof(SyncParametersCommand).Namespace
@@ -37,13 +41,195 @@ internal class SyncParametersCommand : IExternalCommand
 
         using var transactionGroup = new TransactionGroup(document);
         transactionGroup.Start(Name);
-
         SyncFabDuctParameters();
         SyncGrilleSpigotSizes();
         SyncElementLevels();
-
         transactionGroup.Assimilate();
 
+        ShowDialogs();
+
+        return Result.Succeeded;
+    }
+
+    private void SyncFabDuctParameters()
+    {
+        var newChangeLog = new ChangeLog();
+        IEnumerable<FabricationPart> fabDucts = elements!.GetAllFabDucts();
+
+        using var transaction = new Transaction(document);
+        transaction.Start("Sync fab duct parameters");
+
+        foreach (FabricationPart fabDuct in fabDucts)
+        {
+            var fabDuctIdValue = new ElementIdValue(fabDuct.Id);
+            var fabDuctParameters = new FabDuctSharedParameters(fabDuct);
+
+            foreach (
+                KeyValuePair<string, double> sharedParameter
+                in fabDuctParameters.SharedParameters)
+            {
+                Parameter? parameter =
+                    sharedParameters.GetRequired(fabDuct, sharedParameter.Key);
+
+                if (parameter == null)
+                    continue;
+
+                if (!parameter.HasValue
+                    || !Units.EqualsWithError(
+                        parameter.AsDouble(),
+                        sharedParameter.Value))
+                {
+                    if (sharedParameters.Set(parameter, sharedParameter.Value))
+                        newChangeLog.Add(
+                            fabDuctIdValue,
+                            sharedParameter.Key,
+                            Units
+                            .FeetToMm(sharedParameter.Value)
+                            .ToString("0.0"));
+                }
+            }
+        }
+
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Warning!",
+                MainContent =
+                    "Failed to commit transaction. Fab duct parameters not " +
+                    "synced.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+        }
+    }
+
+    private void SyncGrilleSpigotSizes()
+    {
+        var newChangeLog = new ChangeLog();
+        IEnumerable<Element> grilles = elements!.GetAllGrilles();
+
+        using var transaction = new Transaction(document);
+        transaction.Start("Sync grilles spigot sizes");
+
+        foreach (Element grille in grilles)
+        {
+            var grilleIdValue = new ElementIdValue(grille.Id);
+            var grilleParameters = new GrilleSharedParameters(grille);
+
+            foreach (
+                KeyValuePair<string, string> sharedParameter
+                in grilleParameters.SharedParameters)
+            {
+                Parameter? parameter =
+                    sharedParameters.GetRequired(grille, sharedParameter.Key);
+
+                if (parameter == null)
+                    continue;
+
+                if (!parameter.HasValue
+                    || parameter.AsString() != sharedParameter.Value)
+                {
+                    if (sharedParameters.Set(parameter, sharedParameter.Value))
+                        newChangeLog.Add(
+                            grilleIdValue,
+                            sharedParameter.Key,
+                            sharedParameter.Value);
+                }
+            }
+        }
+
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Warning!",
+                MainContent =
+                    "Failed to commit transaction. Spigot sizes not synced.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+        }
+    }
+
+    private void SyncElementLevels()
+    {
+        var newChangeLog = new ChangeLog();
+        IEnumerable<Level> levels = elements!.GetAllLevels();
+
+        using var transaction = new Transaction(document);
+        transaction.Start("Sync element levels");
+
+        foreach (Level level in levels)
+        {
+            IEnumerable<Element> elementsInLevel =
+                elements.GetAllElementsOfLevel(level.Id);
+
+            foreach (Element element in elementsInLevel)
+            {
+                var elementIdValue = new ElementIdValue(element.Id);
+                Parameter? rlNameParameter =
+                    sharedParameters.Get(element, SharedParamRlName);
+                Parameter? rlHeightParameter =
+                    sharedParameters.Get(element, SharedParamRlHeight);
+
+                if (rlNameParameter != null &&
+                    rlNameParameter.AsString() != level.Name)
+                {
+                    if (sharedParameters.Set(rlNameParameter, level.Name))
+                        newChangeLog.Add(
+                            elementIdValue,
+                            SharedParamRlName,
+                            level.Name);
+                }
+
+                if (rlHeightParameter != null)
+                {
+                    if (!rlHeightParameter.HasValue
+                        || !Units.EqualsWithError(
+                            rlHeightParameter.AsDouble(),
+                            level.Elevation))
+                    {
+                        if (sharedParameters.Set(
+                            rlHeightParameter,
+                            level.Elevation))
+                        {
+                            newChangeLog.Add(
+                                elementIdValue,
+                                SharedParamRlHeight,
+                                Units.
+                                FeetToMm(level.Elevation)
+                                .ToString("0.0"));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Warning!",
+                MainContent =
+                    "Failed to commit transaction. Element levels not synced.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+        }
+    }
+
+    private void ShowDialogs()
+    {
         if (sharedParameters.HasMissingParameters()
             || sharedParameters.HasReadOnlyParameters())
         {
@@ -103,212 +289,5 @@ internal class SyncParametersCommand : IExternalCommand
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
-
-        return Result.Succeeded;
-    }
-
-    private void SyncFabDuctParameters()
-    {
-        var newChangeLog = new ChangeLog();
-        IEnumerable<FabricationPart> fabDucts = elements!.GetAllFabDucts();
-
-        using var transaction = new Transaction(document);
-        transaction.Start("Sync fab duct parameters");
-
-        foreach (FabricationPart fabDuct in fabDucts)
-        {
-            var fabDuctIdValue = new ElementIdValue(fabDuct.Id);
-            var fabDuctParameters = new FabDuctSharedParameters();
-            fabDuctParameters.Process(fabDuct);
-
-            foreach (
-                KeyValuePair<string, double> sharedParameter
-                in fabDuctParameters.SharedParameters)
-            {
-                Parameter? parameter =
-                    sharedParameters.GetRequired(fabDuct, sharedParameter.Key);
-
-                if (parameter == null)
-                    continue;
-
-                if (!parameter.HasValue
-                    || !EqualsWithError(
-                        parameter.AsDouble(),
-                        sharedParameter.Value))
-                {
-                    if (sharedParameters.Set(parameter, sharedParameter.Value))
-                        newChangeLog.Add(
-                            fabDuctIdValue,
-                            sharedParameter.Key,
-                            FeetToMm(sharedParameter.Value).ToString("0.0"));
-                }
-            }
-        }
-
-        if (transaction.Commit() == TransactionStatus.Committed)
-        {
-            changeLog.Add(newChangeLog);
-        }
-        else
-        {
-            new TaskDialog(Name)
-            {
-                MainInstruction = "Warning!",
-                MainContent =
-                    "Failed to commit transaction. Fab duct parameters not " +
-                    "synced.",
-                CommonButtons = TaskDialogCommonButtons.Close
-            }.Show();
-        }
-    }
-
-    private void SyncGrilleSpigotSizes()
-    {
-        var newChangeLog = new ChangeLog();
-        IEnumerable<Element> grilles = elements!.GetAllGrilles();
-
-        using var transaction = new Transaction(document);
-        transaction.Start("Sync grilles spigot sizes");
-
-        foreach (Element grille in grilles)
-        {
-            Parameter? spigotSizeOnScheduleParameter =
-                sharedParameters.Get(grille, "Spigot Size on Schedule");
-            if (spigotSizeOnScheduleParameter == null)
-                continue;
-
-            Parameter? cuBoxParameter =
-                sharedParameters.Get(grille, "Cu_Box");
-
-            bool cuBox =
-                cuBoxParameter != null && cuBoxParameter.AsInteger() != 0;
-            string spigotSizeOnSchedule = "";
-
-            if (cuBox)
-            {
-                Parameter? spigotSizeParameter =
-                    sharedParameters.GetRequired(grille, "Spigot_Size");
-                Parameter? remarksSpigotsParameter =
-                    sharedParameters.GetRequired(grille, "Remarks_Spigot");
-
-                string spigotSize =
-                    spigotSizeParameter != null
-                    ? FeetToMm(spigotSizeParameter.AsDouble()).ToString()
-                    : "";
-                string remarksSpigot =
-                    remarksSpigotsParameter != null
-                    ? remarksSpigotsParameter.AsString()
-                    : "";
-
-                spigotSizeOnSchedule = spigotSize + remarksSpigot;
-            }
-
-            if (!spigotSizeOnScheduleParameter.HasValue
-                || spigotSizeOnScheduleParameter.AsString()
-                != spigotSizeOnSchedule)
-            {
-                if (sharedParameters.Set(
-                    spigotSizeOnScheduleParameter,
-                    spigotSizeOnSchedule))
-                {
-                    var grilleIdValue = new ElementIdValue(grille.Id);
-                    newChangeLog.Add(
-                        grilleIdValue,
-                        "Spigot Size on Schedule",
-                        spigotSizeOnSchedule);
-                }
-            }
-        }
-
-        if (transaction.Commit() == TransactionStatus.Committed)
-        {
-            changeLog.Add(newChangeLog);
-        }
-        else
-        {
-            new TaskDialog(Name)
-            {
-                MainInstruction = "Warning!",
-                MainContent =
-                    "Failed to commit transaction. Spigot sizes not synced.",
-                CommonButtons = TaskDialogCommonButtons.Close
-            }.Show();
-        }
-    }
-
-    private void SyncElementLevels()
-    {
-        var newChangeLog = new ChangeLog();
-        IEnumerable<Level> levels = elements!.GetAllLevels();
-
-        using var transaction = new Transaction(document);
-        transaction.Start("Sync element levels");
-
-        foreach (Level level in levels)
-        {
-            IEnumerable<Element> elementsInLevel =
-                elements.GetAllElementsOfLevel(level.Id);
-
-            foreach (Element element in elementsInLevel)
-            {
-                var elementIdValue = new ElementIdValue(element.Id);
-                Parameter? rlNameParameter =
-                    sharedParameters.Get(element, "RL Name");
-                Parameter? rlHeightParameter =
-                    sharedParameters.Get(element, "RL Height");
-
-                if (rlNameParameter != null &&
-                    rlNameParameter.AsString() != level.Name)
-                {
-                    if (sharedParameters.Set(rlNameParameter, level.Name))
-                        newChangeLog.Add(elementIdValue, "RL Name", level.Name);
-                }
-
-                if (rlHeightParameter != null)
-                {
-                    if (!rlHeightParameter.HasValue
-                        || !EqualsWithError(
-                            rlHeightParameter.AsDouble(),
-                            level.Elevation))
-                    {
-                        if (sharedParameters.Set(
-                            rlHeightParameter,
-                            level.Elevation))
-                        {
-                            newChangeLog.Add(
-                                elementIdValue,
-                                "RL Height",
-                                FeetToMm(level.Elevation).ToString("0.0"));
-                        }
-                    }
-                }
-            }
-        }
-
-        if (transaction.Commit() == TransactionStatus.Committed)
-        {
-            changeLog.Add(newChangeLog);
-        }
-        else
-        {
-            new TaskDialog(Name)
-            {
-                MainInstruction = "Warning!",
-                MainContent =
-                    "Failed to commit transaction. Element levels not synced.",
-                CommonButtons = TaskDialogCommonButtons.Close
-            }.Show();
-        }
-    }
-
-    private int FeetToMm(double feet)
-    {
-        double roundFactor = (feet >= 0.0) ? 0.5 : -0.5;
-        return (int)(feet * 304.8 + roundFactor);
-    }
-
-    private bool EqualsWithError(double x, double y)
-    {
-        return Math.Abs(x - y) < 1E-6;
     }
 }

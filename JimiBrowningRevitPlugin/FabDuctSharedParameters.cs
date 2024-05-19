@@ -136,7 +136,7 @@ internal class FabDuctSharedParameters
         };
     }
 
-    internal FabDuctSharedParameters()
+    internal FabDuctSharedParameters(FabricationPart fabDuct)
     {
         sharedParameters = new Dictionary<string, double>()
         {
@@ -158,10 +158,7 @@ internal class FabDuctSharedParameters
             { SharedParamSqBendTe, 0 },
             { SharedParamBottomLevel, 0 }
         };
-    }
 
-    internal void Process(FabricationPart fabDuct)
-    {
         MapDimensionsToSharedParameters(fabDuct);
         CalculateInternalSize(fabDuct);
         SyncBottomLevel(fabDuct);

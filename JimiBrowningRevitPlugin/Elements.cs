@@ -117,9 +117,7 @@ internal class Elements
         return fabDucts;
     }
 
-#pragma warning disable CA1822
     internal string GetFabDuctItemNumber(FabricationPart fabDuct)
-#pragma warning restore CA1822
     {
         Parameter itemNumberParameter =
             fabDuct.get_Parameter(

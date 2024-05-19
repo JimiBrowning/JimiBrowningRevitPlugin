@@ -13,24 +13,10 @@ internal class ExternalApplication : IExternalApplication
         "JimiBrowningRevitPluginCore.dll";
     private const string ResourceNamePrefix =
         "JimiBrowningRevitPluginCore.Resources.";
-    private const string SyncIcon16 = "SyncIcon16.png";
-    private const string SyncIcon32 = "SyncIcon32.png";
-    private const string RenameIcon16 = "RenameIcon16.png";
-    private const string RenameIcon32 = "RenameIcon32.png";
 
-    private static readonly string AssemblyName =
-        Assembly.GetExecutingAssembly().Location;
-    private static readonly string AssemblyFolder =
-        Path.GetDirectoryName(AssemblyName)
-        ?? throw new DirectoryNotFoundException(
-            "Failed to get directory from executing assembly location '"
-            + AssemblyName + "'");
-
-    private static BitmapFrame GetEmbeddedImage(string name)
+    private static BitmapFrame GetEmbeddedImage(Assembly assembly, string name)
     {
         string fullName = ResourceNamePrefix + name;
-        string assemblyPath = Path.Combine(AssemblyFolder, ResourcesFileName);
-        Assembly assembly = Assembly.LoadFrom(assemblyPath);
         Stream stream =
             assembly.GetManifestResourceStream(fullName)
             ?? throw new InvalidDataException(
@@ -40,33 +26,48 @@ internal class ExternalApplication : IExternalApplication
 
     public Result OnStartup(UIControlledApplication application)
     {
+        string AssemblyName = Assembly.GetExecutingAssembly().Location;
+        string AssemblyFolder =
+            Path.GetDirectoryName(AssemblyName)
+            ?? throw new DirectoryNotFoundException(
+                "Failed to get directory from executing assembly location '"
+                + AssemblyName + "'");
+        string assemblyPath = Path.Combine(AssemblyFolder, ResourcesFileName);
+        Assembly assembly = Assembly.LoadFrom(assemblyPath);
+
         application.CreateRibbonTab(TabName);
         RibbonPanel ribbonPanel =
             application.CreateRibbonPanel(TabName, PanelName);
 
-        if (ribbonPanel.AddItem(
+        var syncParametersButtonData =
             new PushButtonData(
                 SyncParametersCommand.Name,
                 SyncParametersCommand.Name,
                 AssemblyName,
-                SyncParametersCommand.ClassName))
+                SyncParametersCommand.ClassName);
+        if (ribbonPanel.AddItem(syncParametersButtonData)
             is PushButton syncParametersButton)
         {
-            syncParametersButton.Image = GetEmbeddedImage(SyncIcon16);
-            syncParametersButton.LargeImage = GetEmbeddedImage(SyncIcon32);
+            syncParametersButton.Image =
+                GetEmbeddedImage(assembly, SyncParametersCommand.Icon16);
+            syncParametersButton.LargeImage =
+                GetEmbeddedImage(assembly, SyncParametersCommand.Icon32);
             syncParametersButton.ToolTip = SyncParametersCommand.ToolTip;
         }
 
-        if (ribbonPanel.AddItem(
+        var renumberFabDuctButtonData =
             new PushButtonData(
                 RenumberFabDuctCommand.Name,
                 RenumberFabDuctCommand.Name,
                 AssemblyName,
-                RenumberFabDuctCommand.ClassName))
+                RenumberFabDuctCommand.ClassName);
+        if (ribbonPanel.AddItem(renumberFabDuctButtonData)
             is PushButton renumberFabDuctButton)
         {
-            renumberFabDuctButton.Image = GetEmbeddedImage(RenameIcon16);
-            renumberFabDuctButton.LargeImage = GetEmbeddedImage(RenameIcon32);
+            renumberFabDuctButton.Image =
+                GetEmbeddedImage(assembly, RenumberFabDuctCommand.Icon16);
+            renumberFabDuctButton.LargeImage =
+                GetEmbeddedImage(assembly, RenumberFabDuctCommand.Icon32);
             renumberFabDuctButton.ToolTip = RenumberFabDuctCommand.ToolTip;
         }
 
