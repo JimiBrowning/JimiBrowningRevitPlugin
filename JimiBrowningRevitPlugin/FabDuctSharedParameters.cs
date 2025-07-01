@@ -6,171 +6,42 @@ namespace JimiBrowningRevitPlugin;
 
 internal class FabDuctSharedParameters
 {
-#if REVIT2023_OR_GREATER
-    private const string FabParamBottom = "Lower End Bottom Elevation";
-#else
-    private const string FabParamBottom = "Bottom";
-#endif
-
-    private const string DimensionWidth = "Width";
-    private const string DimensionDepth = "Depth";
-    private const string DimensionWidthIn = "Width In";
-    private const string DimensionDepthIn = "Depth In";
-    private const string DimensionWidthOut = "Width Out";
-    private const string DimensionDepthOut = "Depth Out";
-    private const string DimensionBottomWidth = "Btm Width";
-    private const string DimensionBottomDepth = "Btm Depth";
-    private const string DimensionTopWidth = "Top Width";
-    private const string DimensionLeftWidth = "Left Width";
-    private const string DimensionRightWidth = "Right Width";
-    private const string DimensionInnerRadius = "Inner Radius";
-    private const string DimensionOuterRadius = "Outer Radius";
-    private const string DimensionLeftRadius = "Left Radius";
-    private const string DimensionRightRadius = "Right Radius";
-    private const string DimensionDiameter = "Diameter";
-    private const string DimensionTopExtension = "Top Extension";
-    private const string DimensionTopInnerExtension = "Top Inner Extension";
-    private const string DimensionBottomExtension = "Bottom Extension";
-    private const string DimensionDuctWidth = "Duct Width";
-    private const string DimensionDuctDepth = "Duct Depth";
-    private const string DimensionStepInWidth = "Step in Width";
-    private const string DimensionStepInDepth = "Step In Depth";
-    private const string DimensionBranchWidth = "Branch Width";
-    private const string DimensionBranchDepth = "Branch Depth";
-    private const string DimensionBranchWidth1 = "Branch Width #1";
-    private const string DimensionBranchDepth1 = "Branch Depth #1";
-
-    private const string SharedParamWidth1 = "FAB WIDTH 1";
-    private const string SharedParamWidth2 = "FAB WIDTH 2";
-    private const string SharedParamWidth3 = "FAB WIDTH 3";
-    private const string SharedParamHeight1 = "FAB HEIGHT 1";
-    private const string SharedParamHeight2 = "FAB HEIGHT 2";
-    private const string SharedParamHeight3 = "FAB HEIGHT 3";
-    private const string SharedParamDiameter1 = "FAB DIAMETER 1";
-    private const string SharedParamInternalWidth = "Internal Width";
-    private const string SharedParamInternalHeight = "Internal Height";
-    private const string SharedParamInternalDiameter = "Internal Diameter";
-    private const string SharedParamRadius = "Actual Radius";
-    private const string SharedParamRadius1 = "FAB RADIUS 1";
-    private const string SharedParamRadius2 = "FAB RADIUS 2";
-    private const string SharedParamRadius3 = "FAB RADIUS 3";
-    private const string SharedParamSqBendBe = "Sq Bend BE";
-    private const string SharedParamSqBendTe = "Sq Bend TE";
-    private const string SharedParamBottomLevel = "Bottom Level";
-
-    private static readonly Dictionary<string, List<string>>
-        DimensionToSharedParamMap;
-
     internal IReadOnlyDictionary<string, double> SharedParameters
     {
         get => sharedParameters;
     }
 
-    private readonly Dictionary<string, double> sharedParameters;
+    private readonly Dictionary<string, double> sharedParameters = [];
 
-    static FabDuctSharedParameters()
+    internal FabDuctSharedParameters(
+        FabricationPart fabDuct,
+        Configuration config)
     {
-        DimensionToSharedParamMap = new Dictionary<string, List<string>>()
-        {
-            { DimensionWidth, new List<string>{
-                SharedParamWidth1,
-                SharedParamWidth2 ,
-                SharedParamWidth3} },
-            { DimensionDepth, new List<string>{
-                SharedParamHeight1,
-                SharedParamHeight2,
-                SharedParamHeight3 } },
-            { DimensionWidthIn, new List<string>{
-                SharedParamWidth1 } },
-            { DimensionDepthIn, new List<string>{
-                SharedParamHeight1 } },
-            { DimensionWidthOut, new List<string>{
-                SharedParamWidth2 } },
-            { DimensionDepthOut, new List<string>{
-                SharedParamHeight2 } },
-            { DimensionBottomWidth, new List<string>{
-                SharedParamWidth1 } },
-            { DimensionBottomDepth, new List<string>{
-                SharedParamHeight1,
-                SharedParamHeight2,
-                SharedParamHeight3 } },
-            { DimensionTopWidth, new List<string>{
-                SharedParamWidth2 } },
-            { DimensionLeftWidth, new List<string>{
-                SharedParamWidth2 } },
-            { DimensionRightWidth, new List<string>{
-                SharedParamWidth3 } },
-            { DimensionInnerRadius, new List<string>{
-                SharedParamRadius,
-                SharedParamRadius1 } },
-            { DimensionOuterRadius, new List<string>{
-                SharedParamRadius2 } },
-            { DimensionLeftRadius, new List<string>{
-                SharedParamRadius2 } },
-            { DimensionRightRadius, new List<string>{
-                SharedParamRadius3 } },
-            { DimensionDiameter, new List<string>{
-                SharedParamDiameter1 } },
-            { DimensionTopExtension, new List<string>{
-                SharedParamSqBendTe } },
-            { DimensionTopInnerExtension, new List<string>{
-                SharedParamSqBendTe } },
-            { DimensionBottomExtension, new List<string>{
-                SharedParamSqBendBe } },
-            { DimensionDuctWidth, new List<string>{
-                SharedParamWidth1 } },
-            { DimensionDuctDepth, new List<string>{
-                SharedParamHeight1 } },
-            { DimensionStepInWidth, new List<string>{
-                SharedParamWidth2 } },
-            { DimensionStepInDepth, new List<string>{
-                SharedParamHeight2 } },
-            { DimensionBranchWidth, new List<string>{
-                SharedParamWidth1 } },
-            { DimensionBranchDepth, new List<string>{
-                SharedParamHeight1 } },
-            { DimensionBranchWidth1, new List<string>{
-                SharedParamWidth1 } },
-            { DimensionBranchDepth1, new List<string>{
-                SharedParamHeight1 } }
-        };
+        InitialiseFabricationSharedParameters(config);
+        SyncFabricationDimensionsWithSharedParameters(fabDuct, config);
+        SyncFabricationInternalSize(fabDuct, config);
+        SyncFabricationBottomLevel(fabDuct, config);
     }
 
-    internal FabDuctSharedParameters(FabricationPart fabDuct)
+    private void InitialiseFabricationSharedParameters(Configuration config)
     {
-        sharedParameters = new Dictionary<string, double>()
-        {
-            { SharedParamWidth1, 0 },
-            { SharedParamWidth2, 0 },
-            { SharedParamWidth3, 0 },
-            { SharedParamHeight1, 0 },
-            { SharedParamHeight2, 0 },
-            { SharedParamHeight3, 0 },
-            { SharedParamDiameter1, 0 },
-            { SharedParamInternalWidth, 0 },
-            { SharedParamInternalHeight, 0 },
-            { SharedParamInternalDiameter, 0 },
-            { SharedParamRadius, 0 },
-            { SharedParamRadius1, 0 },
-            { SharedParamRadius2, 0 },
-            { SharedParamRadius3, 0 },
-            { SharedParamSqBendBe, 0 },
-            { SharedParamSqBendTe, 0 },
-            { SharedParamBottomLevel, 0 }
-        };
-
-        MapDimensionsToSharedParameters(fabDuct);
-        CalculateInternalSize(fabDuct);
-        SyncBottomLevel(fabDuct);
+        foreach (string sharedParameter in config.FabDuctSharedParameters)
+            sharedParameters.Add(sharedParameter, 0);
     }
 
-    private void MapDimensionsToSharedParameters(FabricationPart fabDuct)
+    private void SyncFabricationDimensionsWithSharedParameters(
+        FabricationPart fabDuct,
+        Configuration config)
     {
         IList<FabricationDimensionDefinition> dimensions =
             fabDuct.GetDimensions();
+
+        double centreRadius = 0;
+        double diameter = 0;
+
         foreach (FabricationDimensionDefinition dimension in dimensions)
         {
-            if (DimensionToSharedParamMap.TryGetValue(
+            if (config.FabDimToSharedParamMap.TryGetValue(
                 dimension.Name,
                 out List<string>? sharedParameters))
             {
@@ -178,68 +49,197 @@ internal class FabDuctSharedParameters
                 foreach (string sharedParameter in sharedParameters)
                     Set(sharedParameter, value);
             }
+
+            if (dimension.Name == config.FabDimCentreRadius)
+                centreRadius = fabDuct.GetDimensionValue(dimension);
+            if (dimension.Name == config.FabDimDiameter)
+                diameter = fabDuct.GetDimensionValue(dimension);
+        }
+
+        if (centreRadius > 0 && diameter > 0)
+        {
+            double innerRadius = centreRadius - (diameter / 2);
+
+            Set(config.SharedParamRadius1, innerRadius);
         }
     }
 
-    private void CalculateInternalSize(FabricationPart fabDuct)
+    private void SyncFabricationInternalSize(
+        FabricationPart fabDuct,
+        Configuration config)
     {
         double totalLiningThickness = 2 * fabDuct.LiningThickness;
 
-        double[] internalWidth = [
-            Math.Max(
-                sharedParameters[SharedParamWidth1] - totalLiningThickness,
-                0),
-            Math.Max(
-                sharedParameters[SharedParamWidth2] - totalLiningThickness,
-                0),
-            Math.Max(
-                sharedParameters[SharedParamWidth3] - totalLiningThickness,
-                0)
-        ];
-        double[] internalHeight = [
-            Math.Max(
-                sharedParameters[SharedParamHeight1] - totalLiningThickness,
-                0),
-            Math.Max(
-                sharedParameters[SharedParamHeight2] - totalLiningThickness,
-                0),
-            Math.Max(
-                sharedParameters[SharedParamHeight3] - totalLiningThickness,
-                0)
-        ];
-        double internalDiameter =
-            Math.Max(
-                sharedParameters[SharedParamDiameter1] - totalLiningThickness,
-                0);
-
-        double smallestArea = double.MaxValue;
-        int smallestAreaIndex = 0;
-
-        for (int i = 0; i < internalWidth.Length; i++)
+        if (sharedParameters.ContainsKey(config.SharedParamWidth1)
+            && sharedParameters.ContainsKey(config.SharedParamWidth2)
+            && sharedParameters.ContainsKey(config.SharedParamWidth3)
+            && sharedParameters.ContainsKey(config.SharedParamHeight1)
+            && sharedParameters.ContainsKey(config.SharedParamHeight2)
+            && sharedParameters.ContainsKey(config.SharedParamHeight3))
         {
-            double internalArea = internalWidth[i] * internalHeight[i];
+            double[] internalWidth = [
+                Math.Max(
+                    sharedParameters[config.SharedParamWidth1]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamWidth2]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamWidth3]
+                    - totalLiningThickness,
+                    0)
+                ];
+            double[] internalHeight = [
+                Math.Max(
+                    sharedParameters[config.SharedParamHeight1]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamHeight2]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamHeight3]
+                    - totalLiningThickness,
+                    0)
+                ];
 
-            if (internalArea > 0 && internalArea < smallestArea)
+            double smallestArea = double.MaxValue;
+            int smallestAreaIndex = 0;
+
+            for (int i = 0; i < internalWidth.Length; i++)
             {
-                smallestArea = internalArea;
-                smallestAreaIndex = i;
+                double internalArea = internalWidth[i] * internalHeight[i];
+
+                if (internalArea > 0 && internalArea < smallestArea)
+                {
+                    smallestArea = internalArea;
+                    smallestAreaIndex = i;
+                }
             }
+
+            Set(
+                config.SharedParamInternalWidth,
+                internalWidth[smallestAreaIndex]);
+            Set(
+                config.SharedParamInternalHeight,
+                internalHeight[smallestAreaIndex]);
         }
 
-        Set(SharedParamInternalWidth, internalWidth[smallestAreaIndex]);
-        Set(SharedParamInternalHeight, internalHeight[smallestAreaIndex]);
-        Set(SharedParamInternalDiameter, internalDiameter);
+        if (sharedParameters.ContainsKey(config.SharedParamOvalWidth1)
+            && sharedParameters.ContainsKey(config.SharedParamOvalWidth2)
+            && sharedParameters.ContainsKey(config.SharedParamOvalWidth3)
+            && sharedParameters.ContainsKey(config.SharedParamOvalHeight1)
+            && sharedParameters.ContainsKey(config.SharedParamOvalHeight2)
+            && sharedParameters.ContainsKey(config.SharedParamOvalHeight3))
+        {
+            double[] internalOvalWidth = [
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalWidth1]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalWidth2]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalWidth3]
+                    - totalLiningThickness,
+                    0)
+                ];
+            double[] internalOvalHeight = [
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalHeight1]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalHeight2]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamOvalHeight3]
+                    - totalLiningThickness,
+                    0)
+                ];
+
+            double smallestArea = double.MaxValue;
+            int smallestAreaIndex = 0;
+
+            for (int i = 0; i < internalOvalWidth.Length; i++)
+            {
+                double internalArea =
+                    Math.PI * internalOvalHeight[i] * internalOvalHeight[i] / 4
+                    + (internalOvalWidth[i] - internalOvalHeight[i])
+                    * internalOvalHeight[i];
+
+                if (internalArea > 0 && internalArea < smallestArea)
+                {
+                    smallestArea = internalArea;
+                    smallestAreaIndex = i;
+                }
+            }
+
+            Set(
+                config.SharedParamInternalOvalWidth,
+                internalOvalWidth[smallestAreaIndex]);
+            Set(
+                config.SharedParamInternalOvalHeight,
+                internalOvalHeight[smallestAreaIndex]);
+        }
+
+        if (sharedParameters.ContainsKey(config.SharedParamDiameter1)
+            && sharedParameters.ContainsKey(config.SharedParamDiameter2)
+            && sharedParameters.ContainsKey(config.SharedParamDiameter3))
+        {
+            double[] internalDiameter = [
+                Math.Max(
+                    sharedParameters[config.SharedParamDiameter1]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamDiameter2]
+                    - totalLiningThickness,
+                    0),
+                Math.Max(
+                    sharedParameters[config.SharedParamDiameter3]
+                    - totalLiningThickness,
+                    0)
+                ];
+
+            double smallestDiameter = double.MaxValue;
+            int smallestDiameterIndex = 0;
+
+            for (int i = 0; i < internalDiameter.Length; i++)
+            {
+                double diameter = internalDiameter[i];
+
+                if (diameter > 0 && diameter < smallestDiameter)
+                {
+                    smallestDiameter = diameter;
+                    smallestDiameterIndex = i;
+                }
+            }
+
+            Set(
+                config.SharedParamInternalDiameter,
+                internalDiameter[smallestDiameterIndex]);
+        }
     }
 
-    private void SyncBottomLevel(FabricationPart fabDuct)
+    private void SyncFabricationBottomLevel(
+        FabricationPart fabDuct,
+        Configuration config)
     {
-        Parameter bottomLevelParameter =
-            fabDuct.LookupParameter(FabParamBottom);
+        Parameter bottomElevationParameter =
+            fabDuct.LookupParameter(config.FabParamBottomElevation);
 
-        double bottomLevel =
-            bottomLevelParameter != null ? bottomLevelParameter.AsDouble() : 0;
+        double bottomElevation = bottomElevationParameter != null
+            ? bottomElevationParameter.AsDouble()
+            : 0;
 
-        Set(SharedParamBottomLevel, bottomLevel);
+        Set(config.SharedParamBottomLevel, bottomElevation);
     }
 
     private void Set(string sharedParameter, double value)

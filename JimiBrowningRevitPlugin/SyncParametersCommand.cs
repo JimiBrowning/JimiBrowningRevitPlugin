@@ -28,6 +28,7 @@ internal class SyncParametersCommand : IExternalCommand
 
     private Document? document;
     private Elements? elements;
+    private Configuration? config;
 
     public Result Execute(
         ExternalCommandData externalCommandData,
@@ -37,6 +38,36 @@ internal class SyncParametersCommand : IExternalCommand
         UIDocument uiDocument =
             externalCommandData.Application.ActiveUIDocument;
         document = uiDocument.Document;
+
+        if (document.IsFamilyDocument)
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Family document",
+                MainContent =
+                    "This feature can't be used in a family.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+
+            return Result.Failed;
+        }
+
+        config = new Configuration(document);
+
+        if (!config.IsAirmechDatabase)
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Fabrication configuration not supported",
+                MainContent =
+                    "This feature is only intended for Airmech Fabrication " +
+                    "configurations.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+
+            return Result.Failed;
+        }
+
         elements = new Elements(uiDocument);
 
         using var transactionGroup = new TransactionGroup(document);
@@ -62,7 +93,8 @@ internal class SyncParametersCommand : IExternalCommand
         foreach (FabricationPart fabDuct in fabDucts)
         {
             var fabDuctIdValue = new ElementIdValue(fabDuct.Id);
-            var fabDuctParameters = new FabDuctSharedParameters(fabDuct);
+            var fabDuctParameters =
+                new FabDuctSharedParameters(fabDuct, config!);
 
             foreach (
                 KeyValuePair<string, double> sharedParameter
