@@ -29,6 +29,22 @@ internal class RenumberFabDuctCommand : IExternalCommand
         ref string message,
         ElementSet elementSet)
     {
+        Document document =
+            externalCommandData.Application.ActiveUIDocument.Document;
+
+        if (document.IsFamilyDocument)
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Family document",
+                MainContent =
+                    "This feature can't be used in a family.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+
+            return Result.Failed;
+        }
+
         if (RenumberFabDuctForm.IsOpened())
             return Result.Failed;
 
