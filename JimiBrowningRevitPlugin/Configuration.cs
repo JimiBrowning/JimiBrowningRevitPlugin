@@ -246,7 +246,7 @@ internal class Configuration
                     if (projectParameters.Contains(compatSharedParameter))
                     {
                         mappedSharedParameters.Add(compatSharedParameter);
-                        fabDuctSharedParameters.Add(mappedSharedParameter);
+                        fabDuctSharedParameters.Add(compatSharedParameter);
                     }
                 }
             }
