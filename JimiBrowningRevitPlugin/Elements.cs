@@ -225,4 +225,17 @@ internal class Elements
 
         return elements;
     }
+
+    internal IEnumerable<Element> GetAllMechanicalEquipment()
+    {
+        var collector = new FilteredElementCollector(document);
+        var filter =
+            new ElementCategoryFilter(BuiltInCategory.OST_MechanicalEquipment);
+        IEnumerable<Element> elements =
+            collector
+            .WherePasses(filter)
+            .WhereElementIsNotElementType();
+
+        return elements;
+    }
 }
