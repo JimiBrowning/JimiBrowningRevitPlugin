@@ -2,7 +2,9 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JimiBrowningRevitPlugin;
 
@@ -17,6 +19,9 @@ internal class SyncParametersCommand : IExternalCommand
 
     private const string SharedParamRlName = "RL Name";
     private const string SharedParamRlHeight = "RL Height";
+    private const string SharedParamSystemId = "System ID";
+
+    private const string ProjectParamScheduleSortId = "Schedule Sort ID";
 
     internal static readonly string ClassName =
         typeof(SyncParametersCommand).Namespace
@@ -75,6 +80,7 @@ internal class SyncParametersCommand : IExternalCommand
         SyncFabDuctParameters();
         SyncGrilleSpigotSizes();
         SyncElementLevels();
+        SyncScheduleSortIds();
         transactionGroup.Assimilate();
 
         ShowDialogs();
@@ -255,6 +261,106 @@ internal class SyncParametersCommand : IExternalCommand
                 MainInstruction = "Warning!",
                 MainContent =
                     "Failed to commit transaction. Element levels not synced.",
+                CommonButtons = TaskDialogCommonButtons.Close
+            }.Show();
+        }
+    }
+
+    private void SyncScheduleSortIds()
+    {
+        IEnumerable<Element> allMechanicalEquipment =
+            elements!.GetAllMechanicalEquipment();
+
+        if (allMechanicalEquipment.First() == null)
+            return;
+
+        Parameter firstScheduleSortIdParameter =
+            allMechanicalEquipment
+            .First()
+            .LookupParameter(ProjectParamScheduleSortId);
+
+        if (firstScheduleSortIdParameter == null)
+            return;
+
+        var newChangeLog = new ChangeLog();
+
+        using var transaction = new Transaction(document);
+        transaction.Start("Sync schedule sort IDs");
+
+        foreach (Element mechanicalEquipment in allMechanicalEquipment)
+        {
+            Parameter systemIdParameter =
+                mechanicalEquipment.LookupParameter(SharedParamSystemId);
+            Parameter scheduleSortIdParameter =
+                mechanicalEquipment.LookupParameter(ProjectParamScheduleSortId);
+
+            string? systemId = systemIdParameter?.AsString();
+            string scheduleSortId = "";
+            string currentScheduleSortId = scheduleSortIdParameter.AsString();
+
+            if (systemId != null && !string.IsNullOrEmpty(systemId))
+            {
+                string pattern = "[^a-zA-Z\\d]";
+                Match match = Regex.Match(systemId, pattern);
+                if (match.Success && match.Index + 1 < systemId.Length)
+                {
+                    int index = match.Index;
+
+                    string systemType = systemId.Substring(0, index);
+                    string systemNumber = systemId.Substring(index + 1);
+                    string systemSortSuffix = "";
+
+                    switch (systemType)
+                    {
+                        case "CU":
+                        case "VRV":
+                        case "VRF":
+                        case "ACCU":
+                            systemSortSuffix = " [1 - " + systemType + "]";
+                            break;
+
+                        case "FCU":
+                        case "AC":
+                            systemSortSuffix = " [2 - " + systemType + "]";
+                            break;
+
+                        default:
+                            systemNumber = systemId;
+                            break;
+                    }
+
+                    scheduleSortId = systemNumber + systemSortSuffix;
+                }
+                else
+                {
+                    scheduleSortId = systemId;
+                }
+            }
+
+            if (scheduleSortId != currentScheduleSortId)
+            {
+                scheduleSortIdParameter.Set(scheduleSortId);
+
+                var elementIdValue = new ElementIdValue(mechanicalEquipment.Id);
+                changeLog.Add(
+                    elementIdValue,
+                    ProjectParamScheduleSortId,
+                    scheduleSortId);
+            }
+        }
+
+        if (transaction.Commit() == TransactionStatus.Committed)
+        {
+            changeLog.Add(newChangeLog);
+        }
+        else
+        {
+            new TaskDialog(Name)
+            {
+                MainInstruction = "Warning!",
+                MainContent =
+                    "Failed to commit transaction. Schedule sort IDs not " +
+                    "synced.",
                 CommonButtons = TaskDialogCommonButtons.Close
             }.Show();
         }
