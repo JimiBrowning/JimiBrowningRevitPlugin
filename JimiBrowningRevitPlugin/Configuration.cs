@@ -241,7 +241,7 @@ internal class Configuration
                 }
                 else if (sharedParamBackCompatMap.TryGetValue(
                     mappedSharedParameter,
-                    out string compatSharedParameter))
+                    out string? compatSharedParameter))
                 {
                     if (projectParameters.Contains(compatSharedParameter))
                     {
