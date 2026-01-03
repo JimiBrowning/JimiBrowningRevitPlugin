@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+	<UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER;REVIT2025_OR_GREATER;REVIT2025;REVIT2026_OR_GREATER;REVIT2026</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);REVIT2020_OR_GREATER;REVIT2021_OR_GREATER;REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER;REVIT2025_OR_GREATER;REVIT2025;REVIT2026_OR_GREATER;REVIT2026</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\RenameIcon16.png" />
+    <None Remove="Resources\RenameIcon32.png" />
+    <None Remove="Resources\SyncIcon16.png" />
+    <None Remove="Resources\SyncIcon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\RenameIcon16.png" />
+    <EmbeddedResource Include="Resources\RenameIcon32.png" />
+    <EmbeddedResource Include="Resources\SyncIcon16.png" />
+    <EmbeddedResource Include="Resources\SyncIcon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2026.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="JimiBrowningRevitPlugin.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2026.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2026\&quot;&#xD;&#xA;Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2026.addin&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2026\&quot;&#xD;&#xA;if $(ConfigurationName) == Release (&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2026.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2026\&quot;&#xD;&#xA;  Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2026.addin&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2026\&quot;&#xD;&#xA;)" />
+  </Target>
+
+  <Import Project="..\JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems" Label="Shared" />
+
+</Project>
