@@ -5,6 +5,7 @@
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
+	<UseWPF>true</UseWPF>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
@@ -17,23 +18,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\RenameIcon16.png" />
+    <None Remove="Resources\RenameIcon32.png" />
+    <None Remove="Resources\SyncIcon16.png" />
+    <None Remove="Resources\SyncIcon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\RenameIcon16.png" />
+    <EmbeddedResource Include="Resources\RenameIcon32.png" />
+    <EmbeddedResource Include="Resources\SyncIcon16.png" />
+    <EmbeddedResource Include="Resources\SyncIcon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JimiBrowningRevitPluginCore\JimiBrowningRevitPluginCore.csproj" />
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2021.1.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="RevitAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="RevitAPIUI">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="WindowsBase" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JimiBrowningRevitPluginCore.Properties {
+namespace JimiBrowningRevitPlugin2022.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace JimiBrowningRevitPluginCore.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JimiBrowningRevitPluginCore.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JimiBrowningRevitPlugin2022.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

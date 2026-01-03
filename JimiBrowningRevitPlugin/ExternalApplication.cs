@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 
@@ -9,14 +10,15 @@ internal class ExternalApplication : IExternalApplication
 {
     private const string TabName = "Jimi Browning";
     private const string PanelName = "Jimi Browning";
-    private const string ResourcesFileName =
-        "JimiBrowningRevitPluginCore.dll";
-    private const string ResourceNamePrefix =
-        "JimiBrowningRevitPluginCore.Resources.";
 
     private static BitmapFrame GetEmbeddedImage(Assembly assembly, string name)
     {
-        string fullName = ResourceNamePrefix + name;
+        string fullName = 
+            assembly
+            .GetManifestResourceNames()
+            .FirstOrDefault(x => x.EndsWith("." + name))
+            ?? throw new InvalidDataException(
+                "Failed to find icon '" + name + "'"); ;
         Stream stream =
             assembly.GetManifestResourceStream(fullName)
             ?? throw new InvalidDataException(
@@ -26,14 +28,15 @@ internal class ExternalApplication : IExternalApplication
 
     public Result OnStartup(UIControlledApplication application)
     {
-        string AssemblyName = Assembly.GetExecutingAssembly().Location;
-        string AssemblyFolder =
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string assemblyName = assembly.Location;
+        /*string AssemblyFolder =
             Path.GetDirectoryName(AssemblyName)
             ?? throw new DirectoryNotFoundException(
                 "Failed to get directory from executing assembly location '"
                 + AssemblyName + "'");
         string assemblyPath = Path.Combine(AssemblyFolder, ResourcesFileName);
-        Assembly assembly = Assembly.LoadFrom(assemblyPath);
+        Assembly assembly = Assembly.LoadFrom(assemblyPath);*/
 
         application.CreateRibbonTab(TabName);
         RibbonPanel ribbonPanel =
@@ -43,7 +46,7 @@ internal class ExternalApplication : IExternalApplication
             new PushButtonData(
                 SyncParametersCommand.Name,
                 SyncParametersCommand.Name,
-                AssemblyName,
+                assemblyName,
                 SyncParametersCommand.ClassName);
         if (ribbonPanel.AddItem(syncParametersButtonData)
             is PushButton syncParametersButton)
@@ -59,7 +62,7 @@ internal class ExternalApplication : IExternalApplication
             new PushButtonData(
                 RenumberFabDuctCommand.Name,
                 RenumberFabDuctCommand.Name,
-                AssemblyName,
+                assemblyName,
                 RenumberFabDuctCommand.ClassName);
         if (ribbonPanel.AddItem(renumberFabDuctButtonData)
             is PushButton renumberFabDuctButton)
