@@ -271,12 +271,14 @@ internal class SyncParametersCommand : IExternalCommand
         IEnumerable<Element> allMechanicalEquipment =
             elements!.GetAllMechanicalEquipment();
 
-        if (allMechanicalEquipment.First() == null)
+        Element? firstMechanicalEquipment =
+            allMechanicalEquipment.FirstOrDefault();
+
+        if (firstMechanicalEquipment == null)
             return;
 
         Parameter firstScheduleSortIdParameter =
-            allMechanicalEquipment
-            .First()
+            firstMechanicalEquipment
             .LookupParameter(ProjectParamScheduleSortId);
 
         if (firstScheduleSortIdParameter == null)
