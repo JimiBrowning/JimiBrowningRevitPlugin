@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2025.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\&quot;&#xD;&#xA;Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2025.addin&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\&quot;&#xD;&#xA;if $(ConfigurationName) == Release (&#xD;&#xA;  Copy &quot;$(TargetDir)JimiBrowningRevitPlugin2025.dll&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2025\&quot;&#xD;&#xA;  Copy &quot;$(ProjectDir)JimiBrowningRevitPlugin2025.addin&quot; &quot;C:\Users\JimiB\Airmech\Airmech - JB\Revit\Plugins\Jimi Browning Revit Plugin\2025\&quot;&#xD;&#xA;)" />
+    <Exec Command="del /s /q &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\JimiBrowningRevitPlugin*&quot;&#xD;&#xA;copy /y &quot;$(TargetDir)JimiBrowningRevitPlugin2025.dll&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)JimiBrowningRevitPlugin2025.addin&quot; &quot;$(ProgramData)\Autodesk\Revit\Addins\2025\&quot;&#xD;&#xA;if $(ConfigurationName) == Release (&#xD;&#xA;  rd /s /q &quot;$(SolutionDir)bin\Release\2025\&quot;&#xD;&#xA;  xcopy /y &quot;$(TargetDir)JimiBrowningRevitPlugin2025.dll&quot; &quot;$(SolutionDir)bin\Release\2025\&quot;&#xD;&#xA;  xcopy /y &quot;$(ProjectDir)JimiBrowningRevitPlugin2025.addin&quot; &quot;$(SolutionDir)bin\Release\2025\&quot;&#xD;&#xA;)" />
   </Target>
 
   <Import Project="..\JimiBrowningRevitPlugin\JimiBrowningRevitPlugin.projitems" Label="Shared" />
